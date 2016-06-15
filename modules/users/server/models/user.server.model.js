@@ -80,6 +80,11 @@ var UserSchema = new Schema({
   },
   providerData: {},
   additionalProvidersData: {},
+  state: {
+    type: String,
+    enum: ["INJURED", "PENDING_APPROVAL", "ACTIVE", "RETIRED"],
+    default: ["PENDING_APPROVAL"]
+  },
   roles: {
     type: [{
       type: String,

@@ -3,6 +3,7 @@
 angular.module('users').controller('EditProfileController', ['$scope', '$http', '$location', 'Users', 'Authentication',
   function ($scope, $http, $location, Users, Authentication) {
     $scope.user = Authentication.user;
+    $scope.states = ["ACTIVE", "RETIRED", "PENDING_APPROVAL", "INJURED"];
 
     // Update a user profile
     $scope.updateUserProfile = function (isValid) {

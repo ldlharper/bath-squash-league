@@ -4,6 +4,7 @@ angular.module('users.admin').controller('UserController', ['$scope', '$state', 
   function ($scope, $state, Authentication, userResolve) {
     $scope.authentication = Authentication;
     $scope.user = userResolve;
+    $scope.states = ["ACTIVE", "RETIRED", "PENDING_APPROVAL", "INJURED"];
 
     $scope.remove = function (user) {
       if (confirm('Are you sure you want to delete this user?')) {
