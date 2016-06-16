@@ -1,0 +1,22 @@
+<section data-ng-controller="TablesController" data-ng-init="find()">
+  <div class="page-header">
+    <h1>Tables</h1>
+  </div>
+  <div class="list-group">
+    <div data-ng-repeat="table in tables" class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span data-ng-bind="table.start | date:'mediumDate'"></span>
+        till
+        <span data-ng-bind="table.end | date:'mediumDate'"></span>
+      </small>
+      <h4 class="list-group-item-heading" data-ng-bind="table.number"></h4>
+      <a class="btn btn-primary" data-ng-click="remove(table);">
+        <i class="glyphicon glyphicon-trash"></i>
+      </a>
+    </div>
+  </div>
+  <div class="alert alert-warning text-center" data-ng-if="tables.$resolved && !tables.length">
+    No tables yet, why don't you <a data-ui-sref="tables.create">create one</a>?
+  </div>
+</section>

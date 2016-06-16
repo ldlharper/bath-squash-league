@@ -5,18 +5,18 @@ var should = require('should'),
   path = require('path'),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
-  Article = mongoose.model('Article'),
+  Table = mongoose.model('Table'),
   express = require(path.resolve('./config/lib/express'));
 
 /**
  * Globals
  */
-var app, agent, credentials, user, article;
+var app, agent, credentials, user, table;
 
 /**
- * Article routes tests
+ * Table routes tests
  */
-describe('Article CRUD tests', function () {
+describe('Table CRUD tests', function () {
   before(function (done) {
     // Get application
     app = express.init(mongoose);
@@ -43,18 +43,18 @@ describe('Article CRUD tests', function () {
       provider: 'local'
     });
 
-    // Save a user to the test db and create new article
+    // Save a user to the test db and create new table
     user.save(function () {
-      article = {
-        title: 'Article Title',
-        content: 'Article Content'
+      table = {
+        title: 'Table Title',
+        content: 'Table Content'
       };
 
       done();
     });
   });
 
-  it('should be able to save an article if logged in', function (done) {
+  it('should be able to save an table if logged in', function (done) {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
@@ -67,30 +67,30 @@ describe('Article CRUD tests', function () {
         // Get the userId
         var userId = user.id;
 
-        // Save a new article
-        agent.post('/api/articles')
-          .send(article)
+        // Save a new table
+        agent.post('/api/tables')
+          .send(table)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
-            // Handle article save error
-            if (articleSaveErr) {
-              return done(articleSaveErr);
+          .end(function (tableSaveErr, tableSaveRes) {
+            // Handle table save error
+            if (tableSaveErr) {
+              return done(tableSaveErr);
             }
 
-            // Get a list of articles
-            agent.get('/api/articles')
-              .end(function (articlesGetErr, articlesGetRes) {
-                // Handle article save error
-                if (articlesGetErr) {
-                  return done(articlesGetErr);
+            // Get a list of tables
+            agent.get('/api/tables')
+              .end(function (tablesGetErr, tablesGetRes) {
+                // Handle table save error
+                if (tablesGetErr) {
+                  return done(tablesGetErr);
                 }
 
-                // Get articles list
-                var articles = articlesGetRes.body;
+                // Get tables list
+                var tables = tablesGetRes.body;
 
                 // Set assertions
-                (articles[0].user._id).should.equal(userId);
-                (articles[0].title).should.match('Article Title');
+                (tables[0].user._id).should.equal(userId);
+                (tables[0].title).should.match('Table Title');
 
                 // Call the assertion callback
                 done();
@@ -99,19 +99,19 @@ describe('Article CRUD tests', function () {
       });
   });
 
-  it('should not be able to save an article if not logged in', function (done) {
-    agent.post('/api/articles')
-      .send(article)
+  it('should not be able to save an table if not logged in', function (done) {
+    agent.post('/api/tables')
+      .send(table)
       .expect(403)
-      .end(function (articleSaveErr, articleSaveRes) {
+      .end(function (tableSaveErr, tableSaveRes) {
         // Call the assertion callback
-        done(articleSaveErr);
+        done(tableSaveErr);
       });
   });
 
-  it('should not be able to save an article if no title is provided', function (done) {
+  it('should not be able to save an table if no title is provided', function (done) {
     // Invalidate title field
-    article.title = '';
+    table.title = '';
 
     agent.post('/api/auth/signin')
       .send(credentials)
@@ -125,21 +125,21 @@ describe('Article CRUD tests', function () {
         // Get the userId
         var userId = user.id;
 
-        // Save a new article
-        agent.post('/api/articles')
-          .send(article)
+        // Save a new table
+        agent.post('/api/tables')
+          .send(table)
           .expect(400)
-          .end(function (articleSaveErr, articleSaveRes) {
+          .end(function (tableSaveErr, tableSaveRes) {
             // Set message assertion
-            (articleSaveRes.body.message).should.match('Title cannot be blank');
+            (tableSaveRes.body.message).should.match('Title cannot be blank');
 
-            // Handle article save error
-            done(articleSaveErr);
+            // Handle table save error
+            done(tableSaveErr);
           });
       });
   });
 
-  it('should be able to update an article if signed in', function (done) {
+  it('should be able to update an table if signed in', function (done) {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
@@ -152,32 +152,32 @@ describe('Article CRUD tests', function () {
         // Get the userId
         var userId = user.id;
 
-        // Save a new article
-        agent.post('/api/articles')
-          .send(article)
+        // Save a new table
+        agent.post('/api/tables')
+          .send(table)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
-            // Handle article save error
-            if (articleSaveErr) {
-              return done(articleSaveErr);
+          .end(function (tableSaveErr, tableSaveRes) {
+            // Handle table save error
+            if (tableSaveErr) {
+              return done(tableSaveErr);
             }
 
-            // Update article title
-            article.title = 'WHY YOU GOTTA BE SO MEAN?';
+            // Update table title
+            table.title = 'WHY YOU GOTTA BE SO MEAN?';
 
-            // Update an existing article
-            agent.put('/api/articles/' + articleSaveRes.body._id)
-              .send(article)
+            // Update an existing table
+            agent.put('/api/tables/' + tableSaveRes.body._id)
+              .send(table)
               .expect(200)
-              .end(function (articleUpdateErr, articleUpdateRes) {
-                // Handle article update error
-                if (articleUpdateErr) {
-                  return done(articleUpdateErr);
+              .end(function (tableUpdateErr, tableUpdateRes) {
+                // Handle table update error
+                if (tableUpdateErr) {
+                  return done(tableUpdateErr);
                 }
 
                 // Set assertions
-                (articleUpdateRes.body._id).should.equal(articleSaveRes.body._id);
-                (articleUpdateRes.body.title).should.match('WHY YOU GOTTA BE SO MEAN?');
+                (tableUpdateRes.body._id).should.equal(tableSaveRes.body._id);
+                (tableUpdateRes.body.title).should.match('WHY YOU GOTTA BE SO MEAN?');
 
                 // Call the assertion callback
                 done();
@@ -186,14 +186,14 @@ describe('Article CRUD tests', function () {
       });
   });
 
-  it('should be able to get a list of articles if not signed in', function (done) {
-    // Create new article model instance
-    var articleObj = new Article(article);
+  it('should be able to get a list of tables if not signed in', function (done) {
+    // Create new table model instance
+    var tableObj = new Table(table);
 
-    // Save the article
-    articleObj.save(function () {
-      // Request articles
-      request(app).get('/api/articles')
+    // Save the table
+    tableObj.save(function () {
+      // Request tables
+      request(app).get('/api/tables')
         .end(function (req, res) {
           // Set assertion
           res.body.should.be.instanceof(Array).and.have.lengthOf(1);
@@ -205,16 +205,16 @@ describe('Article CRUD tests', function () {
     });
   });
 
-  it('should be able to get a single article if not signed in', function (done) {
-    // Create new article model instance
-    var articleObj = new Article(article);
+  it('should be able to get a single table if not signed in', function (done) {
+    // Create new table model instance
+    var tableObj = new Table(table);
 
-    // Save the article
-    articleObj.save(function () {
-      request(app).get('/api/articles/' + articleObj._id)
+    // Save the table
+    tableObj.save(function () {
+      request(app).get('/api/tables/' + tableObj._id)
         .end(function (req, res) {
           // Set assertion
-          res.body.should.be.instanceof(Object).and.have.property('title', article.title);
+          res.body.should.be.instanceof(Object).and.have.property('title', table.title);
 
           // Call the assertion callback
           done();
@@ -222,31 +222,31 @@ describe('Article CRUD tests', function () {
     });
   });
 
-  it('should return proper error for single article with an invalid Id, if not signed in', function (done) {
+  it('should return proper error for single table with an invalid Id, if not signed in', function (done) {
     // test is not a valid mongoose Id
-    request(app).get('/api/articles/test')
+    request(app).get('/api/tables/test')
       .end(function (req, res) {
         // Set assertion
-        res.body.should.be.instanceof(Object).and.have.property('message', 'Article is invalid');
+        res.body.should.be.instanceof(Object).and.have.property('message', 'Table is invalid');
 
         // Call the assertion callback
         done();
       });
   });
 
-  it('should return proper error for single article which doesnt exist, if not signed in', function (done) {
-    // This is a valid mongoose Id but a non-existent article
-    request(app).get('/api/articles/559e9cd815f80b4c256a8f41')
+  it('should return proper error for single table which doesnt exist, if not signed in', function (done) {
+    // This is a valid mongoose Id but a non-existent table
+    request(app).get('/api/tables/559e9cd815f80b4c256a8f41')
       .end(function (req, res) {
         // Set assertion
-        res.body.should.be.instanceof(Object).and.have.property('message', 'No article with that identifier has been found');
+        res.body.should.be.instanceof(Object).and.have.property('message', 'No table with that identifier has been found');
 
         // Call the assertion callback
         done();
       });
   });
 
-  it('should be able to delete an article if signed in', function (done) {
+  it('should be able to delete an table if signed in', function (done) {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
@@ -259,28 +259,28 @@ describe('Article CRUD tests', function () {
         // Get the userId
         var userId = user.id;
 
-        // Save a new article
-        agent.post('/api/articles')
-          .send(article)
+        // Save a new table
+        agent.post('/api/tables')
+          .send(table)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
-            // Handle article save error
-            if (articleSaveErr) {
-              return done(articleSaveErr);
+          .end(function (tableSaveErr, tableSaveRes) {
+            // Handle table save error
+            if (tableSaveErr) {
+              return done(tableSaveErr);
             }
 
-            // Delete an existing article
-            agent.delete('/api/articles/' + articleSaveRes.body._id)
-              .send(article)
+            // Delete an existing table
+            agent.delete('/api/tables/' + tableSaveRes.body._id)
+              .send(table)
               .expect(200)
-              .end(function (articleDeleteErr, articleDeleteRes) {
-                // Handle article error error
-                if (articleDeleteErr) {
-                  return done(articleDeleteErr);
+              .end(function (tableDeleteErr, tableDeleteRes) {
+                // Handle table error error
+                if (tableDeleteErr) {
+                  return done(tableDeleteErr);
                 }
 
                 // Set assertions
-                (articleDeleteRes.body._id).should.equal(articleSaveRes.body._id);
+                (tableDeleteRes.body._id).should.equal(tableSaveRes.body._id);
 
                 // Call the assertion callback
                 done();
@@ -289,24 +289,24 @@ describe('Article CRUD tests', function () {
       });
   });
 
-  it('should not be able to delete an article if not signed in', function (done) {
-    // Set article user
-    article.user = user;
+  it('should not be able to delete an table if not signed in', function (done) {
+    // Set table user
+    table.user = user;
 
-    // Create new article model instance
-    var articleObj = new Article(article);
+    // Create new table model instance
+    var tableObj = new Table(table);
 
-    // Save the article
-    articleObj.save(function () {
-      // Try deleting article
-      request(app).delete('/api/articles/' + articleObj._id)
+    // Save the table
+    tableObj.save(function () {
+      // Try deleting table
+      request(app).delete('/api/tables/' + tableObj._id)
         .expect(403)
-        .end(function (articleDeleteErr, articleDeleteRes) {
+        .end(function (tableDeleteErr, tableDeleteRes) {
           // Set message assertion
-          (articleDeleteRes.body.message).should.match('User is not authorized');
+          (tableDeleteRes.body.message).should.match('User is not authorized');
 
-          // Handle article error error
-          done(articleDeleteErr);
+          // Handle table error error
+          done(tableDeleteErr);
         });
 
     });
@@ -314,7 +314,7 @@ describe('Article CRUD tests', function () {
 
   afterEach(function (done) {
     User.remove().exec(function () {
-      Article.remove().exec(done);
+      Table.remove().exec(done);
     });
   });
 });

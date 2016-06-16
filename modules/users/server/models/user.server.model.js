@@ -99,6 +99,10 @@ var UserSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  division: {
+    type: Schema.ObjectId,
+    ref: 'Division'
+  },
   /* For reset password */
   resetPasswordToken: {
     type: String
