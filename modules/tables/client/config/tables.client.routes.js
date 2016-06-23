@@ -11,9 +11,13 @@ angular.module('tables').config(['$stateProvider',
         template: '<ui-view/>'
       })
       .state('tables.current', {
-        url: '/current',
-        templateUrl: 'modules/tables/views/current-table.client.view.html'
+        url: '/rounds',
+        templateUrl: 'modules/tables/views/round.client.view.html'
       })
+        .state('tables.previous', {
+            url: '/rounds/:roundId',
+            templateUrl: 'modules/tables/views/round.client.view.html'
+        })
 
 
 

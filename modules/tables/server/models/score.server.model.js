@@ -16,13 +16,13 @@ var ScoreSchema = new Schema({
   },
   player1Score: {
     type: Number,
-    min: 0,
-    max: 3
+    min: [-1, 'Minimum score is -1 which denotes a no show.'],
+    max: [3, 'Maximum score is 3']
   },
   player2Score: {
     type: Number,
-    min: 0,
-    max: 3
+    min: [-1, 'Minimum score is -1 which denotes a no show.'],
+    max: [3, 'Maximum score is 3']
   },
   player1: {
     type: Schema.ObjectId,

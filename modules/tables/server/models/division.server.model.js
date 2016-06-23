@@ -34,4 +34,6 @@ var DivisionSchema = new Schema({
   }]
 });
 
+DivisionSchema.index({ rank: 1, table: 1 }, { unique: true });
+
 mongoose.model('Division', DivisionSchema);

@@ -24,6 +24,12 @@ var TableSchema = new Schema({
     type: Date,
     required: "End date cannot be blank"
   },
+  isActive: {
+    type: Boolean
+  },
+  currentNumber: {
+    type: Number
+  },
   divisions: [{
     type: Schema.ObjectId,
     ref: 'Division'

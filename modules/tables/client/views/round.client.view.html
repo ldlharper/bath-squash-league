@@ -1,0 +1,55 @@
+<section data-ng-controller="TablesController" data-ng-init="findRound()">
+    <button class="button" ng-click="calculateNewRound()">Calculate</button>
+    <div class="page-header">
+        <h1>Round {{table.number}}</h1>
+        <h2>Starting {{table.start | date:'mediumDate'}} Ending {{table.end | date:'mediumDate'}}</h2>
+    </div>
+    <pagination boundary-links="true" max-size="8" total-items="totalNumber" ng-model="number" items-per-page="itemsPerPage" ng-change="pageChanged()"></pagination>
+    <div class="list-group">
+        <div data-ng-repeat="division in table.divisions" class="list-group-item">
+            <h5>Division {{division.rank + 1}}</h5>
+
+            <table class="table table-striped">
+                <thead>
+                    <th></th>
+                    <th></th>
+                    <th data-ng-repeat="user in division.users">{{indexToLetter[$index]}}</th>
+                </thead>
+                <tbody>
+                     <tr data-ng-repeat="playerRow in division.users">
+                         <td>{{playerRow.displayName}}</td>
+                         <td>{{indexToLetter[$index]}}</td>
+                         <th data-ng-repeat="playerCol in division.users">{{playerRow._id === playerCol._id ? '-' : displayScores[playerRow._id][playerCol._id].display}}</th>
+                         <th>{{displayScores[playerRow._id].total}}</th>
+                     </tr>
+                </tbody>
+            </table>
+
+            <div class="container" ng-if="authentication.user && divisionHasCurrentUser(division, authentication.user) !== -1 && table.isActive">
+                <form class="form-inline" ng-repeat="score in division.scores"  data-ng-submit="submitScore()"  ng-if="score.player1._id === authentication.user._id || score.player2._id === authentication.user._id">
+
+                        <br />
+                        <div class="form-group">
+                            <label ng-attr-for="{{'playerScore' + $index}}" class="control-label">{{authentication.user.displayName}}</label>
+
+                            <input ng-if="score.player1._id === authentication.user._id" data-ng-model="score.player1Score" type="text" class="form-control" ng-attr-id="{{'playerScore' + $index}}" placeholder="Your Score">
+                            <input ng-if="score.player2._id === authentication.user._id"  data-ng-model="score.player2Score" type="text" class="form-control" ng-attr-id="{{'playerScore' + $index}}" placeholder="Your Score">
+                        </div>
+                        <div class="form-group">
+                            <input ng-if="score.player1._id === authentication.user._id" data-ng-model="score.player2Score" type="text" class="form-control" ng-attr-id="{{'opponentScore' + $index}}" placeholder="Opponent Score">
+                            <input ng-if="score.player2._id === authentication.user._id" data-ng-model="score.player1Score" type="text" class="form-control" ng-attr-id="{{'opponentScore' + $index}}" placeholder="Opponent Score">
+
+                            <label  ng-attr-for="{{'opponentScore' + $index}}" class=control-label">{{score.player1._id === authentication.user._id ? score.player2.displayName : score.player1.displayName}}</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-default">
+                        </div>
+                        <div data-ng-show="error" class="text-danger">
+                            <strong data-ng-bind="error"></strong>
+                        </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

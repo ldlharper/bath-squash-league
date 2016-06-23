@@ -4,7 +4,10 @@
  * Module dependencies.
  */
 var tablesPolicy = require('../policies/tables.server.policy'),
-  tables = require('../controllers/tables.server.controller');
+    scoresPolicy = require('../policies/scores.server.policy'),
+    tables = require('../controllers/tables.server.controller'),
+    scores = require('../controllers/scores.server.controller'),
+    rounds = require('../controllers/rounds.server.controller');
 
 module.exports = function (app) {
   // Tables collection routes
@@ -18,6 +21,13 @@ module.exports = function (app) {
     .put(tables.update)
     .delete(tables.delete);
 
+  app.route('/api/rounds/calculate')
+      .post(rounds.createNewTable);
+  // Single score routes
+  app.route('/api/scores/:scoreId').all(scoresPolicy.isAllowed)
+      .put(scores.update);
+
   // Finish by binding the table middleware
   app.param('tableId', tables.tableByID);
+  app.param('scoreId', scores.scoreByID);
 };

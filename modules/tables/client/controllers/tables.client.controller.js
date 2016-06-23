@@ -1,9 +1,21 @@
 'use strict';
 
 // Tables controller
-angular.module('tables').controller('TablesController', ['$scope', '$stateParams', '$location', 'Authentication', 'Tables',
-  function ($scope, $stateParams, $location, Authentication, Tables) {
+angular.module('tables').controller('TablesController', ['$scope', '$stateParams', '$location', '$state', '$http', 'Authentication', 'Tables', 'Scores',
+  function ($scope, $stateParams, $location, $state, $http, Authentication, Tables, Scores) {
     $scope.authentication = Authentication;
+
+      $scope.calculateNewRound = function() {
+        $http({
+            url: '/api/rounds/calculate',
+            method: 'POST'
+        })
+      };
+
+      $scope.pageChanged = function () {
+          $location.path('tables/rounds/' + $scope.number);
+      };
+
 
     // Create new Table
     $scope.create = function () {
@@ -27,10 +39,37 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
     };
 
       $scope.submitScore = function() {
-        debugger;
+          var score = new Scores({
+              _id: this.score._id,
+              player1: this.score.player1._id,
+              player2: this.score.player2._id,
+              player1Score: this.score.player1Score,
+              player2Score: this.score.player2Score,
+              division: this.score.division
+          });
+
+          // Redirect after save
+          score.$update(function (response) {
+
+              $state.reload();
+          }, function (errorResponse) {
+              $scope.error = errorResponse.data.message;
+          });
       };
 
-    // Remove existing Table
+
+      $scope.divisionHasCurrentUser = function(division, user) {
+          var found = false;
+          for (var i in division.users) {
+              var divisionUser = division.users[i];
+              if (user._id === divisionUser._id) {
+                  found = true;
+              }
+          }
+          return found;
+      };
+
+      // Remove existing Table
     $scope.remove = function (table) {
       if (table) {
         table.$remove();
@@ -63,9 +102,20 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
       $scope.tables = Tables.query();
     };
 
-    $scope.findCurrentTable = function() {
-      $scope.table = Tables.get({current:true});
-      $scope.parseTable($scope.table)
+    $scope.findRound = function() {
+        var isNotCurrent =  $stateParams.roundId;
+        if (isNotCurrent) {
+            $scope.table = Tables.get({number:$stateParams.roundId});
+        } else {
+            $scope.table = Tables.get({current:true});
+        }
+        $scope.isCurrent = !isNotCurrent;
+      $scope.table.$promise.then(function (result) {
+          $scope.number = result.number;
+          $scope.itemsPerPage = 1;
+          $scope.totalNumber = result.currentNumber;
+          $scope.calculateScores(result);
+      });
     };
 
     // Find existing Table
@@ -75,42 +125,80 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
       });
     };
 
-    $scope.indexToLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
+    $scope.indexToLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
 
-    $scope.getScoreTableDisplay = function(playerRow, playerCol) {
-      var score = $scope.userToScores[playerRow._id];
-      var result = "";
-      if (playerRow._id === playerCol._id) {
-        result = "-";
-      } else if (!score) {
-        result = "";
-      } else {
-        result = score.score;
+
+
+  $scope.getDisplayScore = function(playerScore, opponentScore) {
+      if (playerScore == -1) {
+          return 0;
+      } else if (playerScore === 0) {
+          return 1;
+      } else if (playerScore === 1) {
+          return 2;
+      } else if (playerScore === 2) {
+          return 3;
+      } else if (playerScore === 3 && opponentScore === 2) {
+          return 4;
+      } else if (playerScore === 3 && opponentScore === 1) {
+          return 5;
+      } else if ((playerScore === 3 && opponentScore === 0) || opponentScore === -1) {
+          return 6;
       }
-      return result;
-    };
+  };
 
-    $scope.parseTable = function(table) {
-      var userToScores = {};
-      for (var i in table.divisions) {
-        var division = table.divisions[i];
-        for (var j in division.scores) {
-          var score = division.scores[j];
-          var player1score = {opponent: score.player2, score: score.player1Score, opponentScore: score.player2Score};
-          if (userToScores[score.player1]) {
-            userToScores[score.player1].push(player1Score);
-          } else {
-            userToScores[score.player1] = [player1score];
-          }
-          var player2score = {opponent: score.player1, score: score.player2Score, opponentScore: score.player1Score};
-          if (userToScores[score.player2]) {
-            userToScores[score.player2].push(player2score);
-          } else {
-            userToScores[score.player2] = [player2score];
-          }
+      $scope.displayScores = {};
+
+      $scope.calculateScores = function(table) {
+        for (var i in table.divisions)  {
+            var division = table.divisions[i];
+            for (var j in division.users) {
+                var user =  division.users[j];
+                for (var k in division.scores) {
+                    var score = division.scores[k];
+                    var opponent = false;
+                    var opponentScore = false;
+                    var playerScore = false;
+                    if (user._id === score.player1._id) {
+                        opponent = score.player2;
+                        opponentScore = score.player2Score;
+                        playerScore = score.player1Score;
+                    }
+                    if (user._id === score.player2._id) {
+                        opponent = score.player1;
+                        opponentScore = score.player1Score;
+                        playerScore = score.player2Score;
+                    }
+                    if (opponent) {
+                        if (!$scope.displayScores[user._id]) {
+                            $scope.displayScores[user._id] = {};
+                        }
+                        $scope.displayScores[user._id][opponent._id] = {
+                            score: playerScore,
+                            display: $scope.getDisplayScore(playerScore, opponentScore)
+                        }
+                    }
+                }
+            }
         }
+          for (var playerProp in $scope.displayScores) {
+              if ($scope.displayScores.hasOwnProperty(playerProp)) {
+                  var player = $scope.displayScores[playerProp];
+                  var total = 0;
+                  for (var opponentProp in player) {
+                      if (player.hasOwnProperty(opponentProp) && opponentProp != "total") {
+                          var displayScore = player[opponentProp].display;
+                          if (displayScore) {
+                              total += displayScore;
+                          } else {
+                              total = "";
+                              break;
+                          }
+                      }
+                  }
+                  player.total = total;
+              }
+          }
       }
-      $scope.userToScores = userToScores;
-    }
   }
 ]);
