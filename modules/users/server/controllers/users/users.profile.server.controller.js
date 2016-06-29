@@ -8,6 +8,7 @@ var _ = require('lodash'),
   path = require('path'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   mongoose = require('mongoose'),
+  playerController = require(path.resolve('./modules/tables/server/controllers/players.server.controller')),
   User = mongoose.model('User');
 
 /**
@@ -22,6 +23,9 @@ exports.update = function (req, res) {
 
   if (user) {
     // Merge existing user
+    if (user.state !== req.body.state) {
+      playerController.updateUserState(user._id, req.body.state, res);
+    }
     user = _.extend(user, req.body);
     user.updated = Date.now();
     user.displayName = user.firstName + ' ' + user.lastName;

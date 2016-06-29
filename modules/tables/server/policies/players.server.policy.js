@@ -15,23 +15,8 @@ exports.invokeRolesPolicies = function () {
   acl.allow([{
     roles: ['admin'],
     allows: [{
-      resources: '/api/tables',
+      resources: '/api/players/division',
       permissions: '*'
-    }, {
-      resources: '/api/tables/:tableId',
-      permissions: '*'
-    }]
-  }, {
-    roles: ['user'],
-    allows: [{
-      resources: '/api/tables',
-      permissions: ['get']
-    }]
-  }, {
-    roles: ['guest'],
-    allows: [{
-      resources: '/api/tables',
-      permissions: ['get']
     }]
   }]);
 };

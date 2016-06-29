@@ -11,7 +11,8 @@ var path = require('path'),
   Score = mongoose.model('Score'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     _ = require('lodash'),
-  _this = this;
+  _this = this,
+  scheduler = require('../scheduler/tables.server.scheduler');
 
 
 var DIVISION_SIZE = 6;
@@ -31,7 +32,7 @@ exports.create = function (req, res) {
     } else {
         User.find().exec(function (err, users) {
             if (err) {
-                return res.status(400).send({
+                return res.status(400).send({   
                     message: errorHandler.getErrorMessage(err)
                 });
             } else {
@@ -59,8 +60,6 @@ exports.create = function (req, res) {
                         divisions.push(division);
                         division.rawUsers = [];
                     }
-                    user.division = division._id;
-                    user.save();
                     division.users.push(user._id);
                     division.save();
                     division.rawUsers.push(user);
@@ -134,17 +133,17 @@ exports.getCurrentTable = function(res, callback) {
         } else {
             if (!doc) {
                 return Table.findOne({start: { $lt: Date.now() }}).populate('divisions').sort("-end").exec(function(err, doc2) {
-                     _this.populateTable(doc2, false, callback);
+                     _this.populateTable(doc2, callback);
                 })
             } else {
-                 _this.populateTable(doc, true, callback);
+                 _this.populateTable(doc, callback);
             }
 
         }
     });
 };
 
-exports.populateTable = function(doc, isActive, callback) {
+exports.populateTable = function(doc, callback) {
     return Table.populate(doc, {
         path: 'divisions.users',
         model: 'User',
@@ -164,6 +163,7 @@ exports.populateTable = function(doc, isActive, callback) {
                     model: 'User',
                     select: 'firstName lastName displayName state'
                 }, function (err, table) {
+                    var isActive = Date.now() > table.start && Date.now() < table.end;
                     table.isActive = isActive;
                     callback(table);
                 });
@@ -177,7 +177,8 @@ exports.populateTable = function(doc, isActive, callback) {
  */
 exports.doGet = function (req, res) {
   var isCurrent = req.query.current,
-      number = req.query.number;
+      number = req.query.number,
+      nextRound = req.query.nextRound;
 
   if (isCurrent) {
       _this.getCurrentTable(res, function(table) {
@@ -187,13 +188,26 @@ exports.doGet = function (req, res) {
   } else if (number) {
       _this.getCurrentTable(res, function(currentTable) {
           Table.findOne({number: number}).populate('divisions').exec(function(err, doc2) {
-              _this.populateTable(doc2, false, function(table) {
+              _this.populateTable(doc2, function(table) {
                   table.currentNumber = currentTable.number;
                   res.json(table);
               });
           });
       });
-    //TODO
+  } else if (nextRound) {
+      Table.findOne({
+          start: { $gt: Date.now() }
+      }).populate('divisions').exec(function(err, doc2) {
+          if (!doc2) {
+              return res.status(400).send({
+                  message: "There is no next round to show. Wait for the current round to end."
+              });
+          }
+          _this.populateTable(doc2, function(table) {
+              table.isNextRound = true;
+              res.json(table);
+          });
+      });
   } else {
       Table.find().populate('divisions').exec(function (err, tables) {
           if (err) {
@@ -214,8 +228,9 @@ exports.doGet = function (req, res) {
 exports.update = function (req, res) {
   var table = req.table;
 
-  table.title = req.body.title;
-  table.content = req.body.content;
+  table.number = req.body.number;
+  table.start = req.body.start;
+  table.end = req.body.end;
 
   table.save(function (err) {
     if (err) {
@@ -234,6 +249,20 @@ exports.update = function (req, res) {
 exports.delete = function (req, res) {
   var table = req.table;
 
+    _.each(table.divisions, function(division) {
+        Division.findById(division).exec(function(err, divisionDoc) {
+            if (divisionDoc) {
+                _.each(divisionDoc.scores, function (score) {
+                    Score.findById(score).exec(function (err, scoreDoc) {
+                        if (scoreDoc) {
+                            scoreDoc.remove();
+                        }
+                    });
+                });
+                divisionDoc.remove();
+            }
+        });
+    });
   table.remove(function (err) {
     if (err) {
       return res.status(400).send({

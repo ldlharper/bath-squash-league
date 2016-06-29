@@ -6,6 +6,7 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
+  playerController = require(path.resolve('./modules/tables/server/controllers/players.server.controller')),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
@@ -26,6 +27,10 @@ exports.update = function (req, res) {
   user.lastName = req.body.lastName;
   user.displayName = user.firstName + ' ' + user.lastName;
   user.roles = req.body.roles;
+
+  if (user.state !== req.body.state) {
+    playerController.updateUserState(user._id, req.body.state, res);
+  }
   user.state = req.body.state;
 
   user.save(function (err) {

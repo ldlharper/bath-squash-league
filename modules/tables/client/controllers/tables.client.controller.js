@@ -13,7 +13,7 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
       };
 
       $scope.pageChanged = function () {
-          $location.path('tables/rounds/' + $scope.number);
+          $location.path('tables/rounds/' + $scope.table.number);
       };
 
 
@@ -97,6 +97,10 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
       });
     };
 
+      $scope.goToEdit = function(tableId) {
+          $location.path('tables/' + tableId + '/edit');
+      };
+
     // Find a list of Articles
     $scope.find = function () {
       $scope.tables = Tables.query();
@@ -104,20 +108,22 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
 
     $scope.findRound = function() {
         var isNotCurrent =  $stateParams.roundId;
+        var isNextRound = $state.includes("tables.nextRound");
         if (isNotCurrent) {
             $scope.table = Tables.get({number:$stateParams.roundId});
+        } else if (isNextRound) {
+            $scope.table = Tables.get({nextRound:true});
         } else {
             $scope.table = Tables.get({current:true});
         }
-        $scope.isCurrent = !isNotCurrent;
+        $scope.isNextRound = isNextRound;
       $scope.table.$promise.then(function (result) {
-          $scope.number = result.number;
           $scope.itemsPerPage = 1;
           $scope.totalNumber = result.currentNumber;
+          $scope.isCurrent = result.number === result.currentNumber;
           $scope.calculateScores(result);
       });
     };
-
     // Find existing Table
     $scope.findOne = function () {
       $scope.table = Tables.get({
@@ -127,8 +133,16 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
 
     $scope.indexToLetter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
 
-
-
+    $scope.divisionForm = {};
+    $scope.divisionUpdate = function() {
+        $http({
+            url: '/api/players/division',
+            method: 'PUT',
+            data: $scope.divisionForm
+        }).then(function() {
+            $state.reload();
+        });
+    };
   $scope.getDisplayScore = function(playerScore, opponentScore) {
       if (playerScore == -1) {
           return 0;
@@ -150,10 +164,13 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
       $scope.displayScores = {};
 
       $scope.calculateScores = function(table) {
+          $scope.players = [];
         for (var i in table.divisions)  {
             var division = table.divisions[i];
+            division.displayRank = division.rank + 1;
             for (var j in division.users) {
                 var user =  division.users[j];
+                $scope.players.push(user);
                 for (var k in division.scores) {
                     var score = division.scores[k];
                     var opponent = false;
@@ -169,6 +186,7 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
                         opponentScore = score.player1Score;
                         playerScore = score.player2Score;
                     }
+
                     if (opponent) {
                         if (!$scope.displayScores[user._id]) {
                             $scope.displayScores[user._id] = {};

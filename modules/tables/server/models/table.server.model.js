@@ -30,6 +30,9 @@ var TableSchema = new Schema({
   currentNumber: {
     type: Number
   },
+  isNextRound: {
+    type: Boolean
+  },
   divisions: [{
     type: Schema.ObjectId,
     ref: 'Division'

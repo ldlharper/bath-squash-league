@@ -1,31 +1,32 @@
 <section data-ng-controller="TablesController" data-ng-init="findRound()">
-    <button class="button" ng-click="calculateNewRound()">Calculate</button>
     <div class="page-header">
         <h1>Round {{table.number}}</h1>
         <h2>Starting {{table.start | date:'mediumDate'}} Ending {{table.end | date:'mediumDate'}}</h2>
     </div>
-    <pagination boundary-links="true" max-size="8" total-items="totalNumber" ng-model="number" items-per-page="itemsPerPage" ng-change="pageChanged()"></pagination>
+    <pagination ng-if="!isNextRound" boundary-links="true" max-size="8" total-items="totalNumber" ng-model="table.number" items-per-page="itemsPerPage" ng-change="pageChanged()"></pagination>
     <div class="list-group">
         <div data-ng-repeat="division in table.divisions" class="list-group-item">
-            <h5>Division {{division.rank + 1}}</h5>
+            <h5>Division {{division.displayRank}}</h5>
 
             <table class="table table-striped">
                 <thead>
                     <th></th>
                     <th></th>
                     <th data-ng-repeat="user in division.users">{{indexToLetter[$index]}}</th>
+                    <th>Total</th>
                 </thead>
                 <tbody>
                      <tr data-ng-repeat="playerRow in division.users">
                          <td>{{playerRow.displayName}}</td>
                          <td>{{indexToLetter[$index]}}</td>
-                         <th data-ng-repeat="playerCol in division.users">{{playerRow._id === playerCol._id ? '-' : displayScores[playerRow._id][playerCol._id].display}}</th>
-                         <th>{{displayScores[playerRow._id].total}}</th>
+                         <td ng-if="division.inactiveUsers.indexOf(playerRow._id) === -1" data-ng-repeat="playerCol in division.users">{{playerRow._id === playerCol._id ? '-' : displayScores[playerRow._id][playerCol._id].display}}</td>
+                         <td ng-if="division.inactiveUsers.indexOf(playerRow._id) === -1">{{displayScores[playerRow._id].total}}</td>
+                         <td colspan="{{division.users.length + 1}}" class="text-center" ng-if="division.inactiveUsers.indexOf(playerRow._id) !== -1">Withdrawn</td>
                      </tr>
                 </tbody>
             </table>
 
-            <div class="container" ng-if="authentication.user && divisionHasCurrentUser(division, authentication.user) !== -1 && table.isActive">
+            <div class="container" ng-if="division.inactiveUsers.indexOf(playerRow._id) === -1 && authentication.user && divisionHasCurrentUser(division, authentication.user) !== -1 && table.isActive">
                 <form class="form-inline" ng-repeat="score in division.scores"  data-ng-submit="submitScore()"  ng-if="score.player1._id === authentication.user._id || score.player2._id === authentication.user._id">
 
                         <br />
@@ -50,6 +51,32 @@
 
                 </form>
             </div>
+        </div>
+
+        <div class="container" ng-if="isNextRound">
+            <form class="form-inline" data-ng-submit="divisionUpdate()">
+                <div class="form-group">
+                    <label class="control-label" for="player">Player</label>
+                    <div class="controls">
+                        <select class="form-control" id="player" data-ng-model="divisionForm.player"
+                                ng-options="player._id as player.displayName for player in players"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="division">Division</label>
+                    <div class="controls">
+                        <select class="form-control" id="division" data-ng-model="divisionForm.division"
+                                ng-options="division._id as division.displayRank for division in table.divisions"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default">
+                </div>
+                <div data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+
+            </form>
         </div>
     </div>
 </section>

@@ -1,0 +1,9 @@
+Styling
+Clean up javascript modules.
+Policies.
+Response feedback messages.
+
+Bugs
+
+Maybes
+See past player scores.

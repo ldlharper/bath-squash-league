@@ -38,78 +38,83 @@ exports.createNewTable = function(req, res) {
                 });
             } else {
                 modelsToRollback.push(table);
-                var numberOfDivisions = _this.getNumberOfDivisions();
+                _this.getNumberOfDivisions(function(numberOfDivisions) {
+                    _this.getUsersToReturn(currentTable._id, numberOfDivisions, function(rankToUser) {
+                        var index = 0;
+                        _.each(_.sortBy(currentTable.divisions, function(division) {return division.rank}), function(division) {
+                            var scores = [],
+                                usersDemoted = 0,
+                                currentRank = division.rank;
 
-
-                _this.getUsersToReturn(currentTable.number, numberOfDivisions, function(rankToUser) {
-                    var index = 0;
-                    _.each(_.sortBy(currentTable.divisions, function(division) {return division.rank}), function(division) {
-                        var scores = [],
-                            usersDemoted = 0,
-                            currentRank = division.rank;
-
-                        index++;
-                        _.each(division.users, function(user) {
-                            if (user.state !== "ACTIVE") {
-                                usersDemoted++;
-                            } else {
-                                var score = _this.calculateUserScore(user, division.scores);
-                                scores.push({score: score, user: user});
-                            }
-                        });
-
-                        scores = _.sortBy(scores, function(score) {return score.score}).reverse();
-
-                        //Promotion
-                        if (currentRank != 0) {
-                            var usersToBePromoted =  DIVISION_SIZE - rankToUser[currentRank - 1].length;
-                            for (var i = 0; i < usersToBePromoted; i++) {
-                                _this.addRankToScore(rankToUser, currentRank - 1, scores[0].user);
-                                _.pullAt(scores, 0);
-                            }
-
-
-                        }
-
-                        //Demotion
-                        if (usersDemoted <= 2 && index != currentTable.divisions.length) {
-                            if (usersDemoted <= 1) {
-                                _this.addRankToScore(rankToUser, currentRank + 1, scores[scores.length - 1].user);
-                                _.pullAt(scores, scores.length - 1);
-                            }
-                            if (usersDemoted == 0) {
-                                _this.addRankToScore(rankToUser, currentRank + 1, scores[scores.length - 1].user);
-                                _.pullAt(scores, scores.length - 1);
-                            }
-                        }
-
-                        //Remain
-                        _.each(scores, function(score) {
-                            _this.addRankToScore(rankToUser, currentRank, score.user);
-                        });
-
-                    });
-
-                    var divisions = [];
-                    for (var prop in rankToUser) {
-                        if (rankToUser.hasOwnProperty(prop)) {
-                            var division = new Division({
-                                rank: prop,
-                                table: table,
-                                users: _.map(rankToUser[prop], '_id')
+                            index++;
+                            _.each(division.users, function(user) {
+                                if (user.state !== "ACTIVE") {
+                                    usersDemoted++;
+                                } else {
+                                    var score = _this.calculateUserScore(user, division.scores);
+                                    scores.push({score: score, user: user});
+                                }
                             });
 
-                            division.save(_this.handleSave.bind(this, division, modelsToRollback, res));
-                            divisions.push(division);
+                            scores = _.sortBy(scores, function(score) {return score.score}).reverse();
+
+                            //Promotion
+                            if (currentRank != 0) {
+                                var usersToBePromoted =  DIVISION_SIZE - rankToUser[currentRank - 1].length;
+                                for (var i = 0; i < usersToBePromoted; i++) {
+                                    _this.addRankToScore(rankToUser, currentRank - 1, scores[0].user);
+                                    _.pullAt(scores, 0);
+                                }
+
+
+                            }
+
+                            //Demotion
+                            if (usersDemoted <= 2 && index != currentTable.divisions.length) {
+                                if (usersDemoted <= 1) {
+                                    _this.addRankToScore(rankToUser, currentRank + 1, scores[scores.length - 1].user);
+                                    _.pullAt(scores, scores.length - 1);
+                                }
+                                if (usersDemoted == 0) {
+                                    _this.addRankToScore(rankToUser, currentRank + 1, scores[scores.length - 1].user);
+                                    _.pullAt(scores, scores.length - 1);
+                                }
+                            }
+
+                            //Remain
+                            _.each(scores, function(score) {
+                                _this.addRankToScore(rankToUser, currentRank, score.user);
+                            });
+
+                        });
+
+                        var divisions = [],
+                            divisionPromises = [];
+                        for (var prop in rankToUser) {
+                            if (rankToUser.hasOwnProperty(prop)) {
+                                var division = new Division({
+                                    rank: prop,
+                                    table: table,
+                                    users: _.map(rankToUser[prop], '_id')
+                                });
+
+                                divisionPromises.push(division.save(_this.handleSave.bind(this, division, modelsToRollback, res)));
+                                divisions.push(division);
+
+                            }
                         }
-                    }
 
-                    table.divisions = _.map(divisions, '_id');
-                    table.save(_this.handleSave.bind(this, table, modelsToRollback, res));
-
-                    _this.populateScores(divisions, modelsToRollback, res);
-
-                    return res.status(204).send();
+                        Promise.all(divisionPromises).then(function() {
+                            table.divisions = _.map(divisions, '_id');
+                            table.save(_this.handleSave.bind(this, table, modelsToRollback, res)).then(function() {
+                                _this.populateScores(divisions, modelsToRollback, res).then(function() {
+                                    if (!res.headersSent) {
+                                        return res.status(204).send();
+                                    }
+                                });
+                            });
+                        });
+                    });
                 });
             }
         });
@@ -117,9 +122,10 @@ exports.createNewTable = function(req, res) {
 };
 
 exports.populateScores = function(divisions, modelsToRollback, res) {
+    var promises = [];
     _.each(divisions, function(division) {
-        var scores = [];
-        var pairs = [];
+        var scores = [],
+            pairs = [];
         _.each(division.users, function(outerUser) {
             _.each(division.users, function(innerUser) {
                 if (!outerUser.equals(innerUser) &&
@@ -132,15 +138,16 @@ exports.populateScores = function(divisions, modelsToRollback, res) {
                         player2Score: null,
                         division: division._id
                     });
-                    score.save(_this.handleSave.bind(this, score, modelsToRollback, res));
+                    promises.push(score.save(_this.handleSave.bind(this, score, modelsToRollback, res)));
                     scores.push(score._id);
                     pairs.push(innerUser + outerUser);
                 }
             });
         });
         division.scores = scores;
-        division.save(_this.handleSave.bind(this, division, modelsToRollback, res));
+        promises.push(division.save(_this.handleSave.bind(this, division, modelsToRollback, res)));
     });
+    return Promise.all(promises);
 };
 
 exports.addRankToScore = function(rankToUser, rank, user) {
@@ -154,12 +161,16 @@ exports.addRankToScore = function(rankToUser, rank, user) {
 exports.handleSave = function(model, models, res, err) {
     if (err) {
         for (var i in models) {
-            models[i].remove();
+            if (models[i].remove) {
+                models[i].remove();
+            }
         }
 
-        return res.status(400).send({
-            message: errorHandler.getErrorMessage(err)
-        });
+        if (!res.headersSent) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
     } else {
         models.push(models);
     }
@@ -184,7 +195,9 @@ exports.calculateUserScore = function(user, scores) {
         }
 
         if (typeof playerScore !== "undefined" &&
-            typeof opponentScore !== "undefined") {
+            typeof opponentScore !== "undefined" &&
+            score.player1.state === "ACTIVE" &&
+            score.player2.state === "ACTIVE") {
             total += _this.calculateScore(playerScore, opponentScore);
         }
     });
@@ -210,22 +223,45 @@ exports.calculateScore = function(playerScore, opponentScore) {
 };
 
 exports.getUsersToReturn = function(currentNumber, numberOfDivisions, callback) {
-    User.find({'division.table.number': {$lt: currentNumber}, state: 'ACTIVE'}).exec(function(err, users) {
-        var rankToUser = {};
-        _.each(users, function(user) {
-            var ranking = user.division.rank - 1;
-            if (ranking > numberOfDivisions) {
-                ranking = numberOfDivisions;
-            }
-            _this.addRankToScore(rankToUser, ranking, user);
+    var rankToUser = {},
+        promises = [],
+        innerPromises = [];
+    User.find({state: 'ACTIVE'}).exec(function (err, users) {
+        _.each(users, function (user) {
+            promises.push(Division.findOne({
+                $and: [
+                    {"table" : currentNumber},
+                    {'users' : {$in: [user._id] }}
+                ]
+            }).exec(function (innerUser, err, currentDivision) {
+                if (!currentDivision) {
+                    innerPromises.push(Division.findOne({'users': { $in : [innerUser._id] }}).sort('-table.number').exec(function (err, prevDivision) {
+                        var ranking;
+                        if (!prevDivision) {
+                            ranking = numberOfDivisions + 1;
+                        } else {
+                            ranking = prevDivision.rank + 1;
+                        }
+                        if (ranking > (numberOfDivisions - 1)) {
+                            ranking = numberOfDivisions -1;
+                        }
+                        _this.addRankToScore(rankToUser, ranking, innerUser);
+                    }));
+                }
+            }.bind(this, user)));
         });
-        callback(rankToUser);
-    })
+    }).then(function () {
+        Promise.all(promises).then(function() {
+           Promise.all(innerPromises).then(function() {
+               callback(rankToUser);
+           });
+        });
+    });
 };
 
-exports.getNumberOfDivisions = function() {
+exports.getNumberOfDivisions = function(callback) {
     return User.count({state: 'ACTIVE'}, function(err, count){
-        return Math.floor(count / DIVISION_SIZE);
+        callback(Math.ceil(count / DIVISION_SIZE));
     });
 };
 

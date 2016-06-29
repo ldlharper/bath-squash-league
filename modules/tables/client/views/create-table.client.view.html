@@ -12,15 +12,19 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="control-label" for="start">Start</label>
+          <label class="control-label">Start</label>
           <div class="controls">
-            <input name="title" type="text" data-ng-model="start" id="start" class="form-control" placeholder="Number">
+            <div style="display:inline-block; min-height:290px;">
+              <datepicker ng-model="start" show-weeks="true" class="well well-sm"></datepicker>
+            </div>
           </div>
         </div>
         <div class="form-group">
-          <label class="control-label" for="end">End</label>
+          <label class="control-label">End</label>
           <div class="controls">
-            <input name="title" type="text" data-ng-model="end" id="end" class="form-control" placeholder="Number">
+            <div style="display:inline-block; min-height:290px;">
+              <datepicker ng-model="end" show-weeks="true" class="well well-sm"></datepicker>
+            </div>
           </div>
         </div>
         <div class="form-group">

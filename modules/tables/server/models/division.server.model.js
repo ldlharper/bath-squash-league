@@ -18,7 +18,7 @@ var DivisionSchema = new Schema({
     type: Number,
     default: '',
     required: 'Rank cannot be blank',
-    min: 0,
+    min: 0
   },
   table: {
     type: Schema.ObjectId,
@@ -31,9 +31,12 @@ var DivisionSchema = new Schema({
   users: [{
     type: Schema.ObjectId,
     ref: 'User'
+  }],
+  inactiveUsers: [{
+    type: Schema.ObjectId,
+    ref: 'User'
   }]
 });
 
-DivisionSchema.index({ rank: 1, table: 1 }, { unique: true });
 
 mongoose.model('Division', DivisionSchema);
