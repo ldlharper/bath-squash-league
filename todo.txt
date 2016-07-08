@@ -1,7 +1,5 @@
 Styling
-Clean up javascript modules.
-Policies.
-Response feedback messages.
+Clean up javascript modules
 
 Bugs
 

@@ -17,8 +17,8 @@ var path = require('path'),
 
 
 var DIVISION_SIZE = 6;
-var DEFAULT_ROUND_LENGTH_DAYS = 1;
-var DEFAULT_BREAK_DAYS = 1;
+var DEFAULT_ROUND_LENGTH_DAYS = 28;
+var DEFAULT_BREAK_DAYS = 7;
 
 
 exports.createNewTable = function(req, res) {
@@ -29,7 +29,15 @@ exports.createNewTable = function(req, res) {
                 start: newStart.toDate(),
                 end: moment(newStart).add(DEFAULT_ROUND_LENGTH_DAYS, 'days').toDate(),
                 number: currentTable.number + 1
+            }),
+            isActive = tablesController.isTableActive(currentTable);
+
+        if (isActive) {
+            return res.status(400).send({
+                message: "There is already an active round. The next round can only be calculated once it has ended."
             });
+        }
+
 
         table.save(function (err) {
             if (err) {

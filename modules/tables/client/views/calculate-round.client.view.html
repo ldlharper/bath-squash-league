@@ -1,4 +1,10 @@
 <section data-ng-controller="TablesController">
     <h3>There should not be a next round available at this point.</h3>
+    <h3 data-ng-show="error" class="text-danger">
+        <strong data-ng-bind="error"></strong>
+    </h3>
+    <h3 data-ng-show="success" class="text-success">
+        <strong data-ng-bind="success"></strong>
+    </h3>
     <button class="button" ng-click="calculateNewRound()">Calculate</button>
 </section>

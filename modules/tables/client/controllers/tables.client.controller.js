@@ -9,7 +9,11 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
         $http({
             url: '/api/rounds/calculate',
             method: 'POST'
-        })
+        }).then(function() {
+            $scope.sucess = "Round calculated."
+        }, function(error) {
+            $scope.error = error.data.message;
+        });
       };
 
       $scope.pageChanged = function () {
@@ -122,6 +126,8 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
           $scope.totalNumber = result.currentNumber;
           $scope.isCurrent = result.number === result.currentNumber;
           $scope.calculateScores(result);
+      }, function(error) {
+          $scope.error = error.data.message;;
       });
     };
     // Find existing Table

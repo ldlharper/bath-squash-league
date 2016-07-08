@@ -1,7 +1,10 @@
 <section data-ng-controller="TablesController" data-ng-init="findRound()">
-    <div class="page-header">
+    <div data-ng-show="error" class="text-danger">
+        <strong data-ng-bind="error"></strong>
+    </div>
+    <div class="page-header" ng-if="table.number && table.start && table.end">
         <h1>Round {{table.number}}</h1>
-        <h2>Starting {{table.start | date:'mediumDate'}} Ending {{table.end | date:'mediumDate'}}</h2>
+        <h2>Starting {{table.start | date:'mediumDate'}} Submit score before {{table.end | date:'mediumDate'}}</h2>
     </div>
     <pagination ng-if="!isNextRound" boundary-links="true" max-size="8" total-items="totalNumber" ng-model="table.number" items-per-page="itemsPerPage" ng-change="pageChanged()"></pagination>
     <div class="list-group">
@@ -53,7 +56,7 @@
             </div>
         </div>
 
-        <div class="container" ng-if="isNextRound">
+        <div class="container" ng-if="isNextRound && table.divisions">
             <form class="form-inline" data-ng-submit="divisionUpdate()">
                 <div class="form-group">
                     <label class="control-label" for="player">Player</label>

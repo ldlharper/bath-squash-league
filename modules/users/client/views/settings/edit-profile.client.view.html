@@ -18,11 +18,11 @@
           <label for="username">Username</label>
           <input type="text" id="username" name="username" class="form-control" data-ng-model="user.username" placeholder="Username">
         </div>
-        <div class="form-group">
+        <div class="form-group" ng-if="user.state !== 'PENDING_APPROVAL'">
           <label class="control-label" for="state">State</label>
           <div class="controls">
             <select class="form-control" id="state" data-ng-model="user.state">
-              <option ng-repeat="state in states">{{state}}</option>
+              <option ng-repeat="state in states" ng-if="state !== 'PENDING_APPROVAL'">{{state}}</option>
             </select>
           </div>
         </div>

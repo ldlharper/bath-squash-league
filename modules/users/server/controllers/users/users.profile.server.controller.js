@@ -23,6 +23,9 @@ exports.update = function (req, res) {
 
   if (user) {
     // Merge existing user
+    if (user.state === "PENDING_APPROVAL") {
+      req.body.state = "PENDING_APPROVAL";
+    }
     if (user.state !== req.body.state) {
       playerController.updateUserState(user._id, req.body.state, res);
     }

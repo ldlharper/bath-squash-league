@@ -22,6 +22,8 @@ var DIVISION_SIZE = 6;
 exports.create = function (req, res) {
   var table = new Table(req.body);
   table.user = req.user;
+  table.number = 1;
+
 
 
   table.save(function (err) {
@@ -30,7 +32,7 @@ exports.create = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-        User.find().exec(function (err, users) {
+        User.find({state: "ACTIVE"}).exec(function (err, users) {
             if (err) {
                 return res.status(400).send({   
                     message: errorHandler.getErrorMessage(err)
@@ -163,8 +165,7 @@ exports.populateTable = function(doc, callback) {
                     model: 'User',
                     select: 'firstName lastName displayName state'
                 }, function (err, table) {
-                    var isActive = Date.now() > table.start && Date.now() < table.end;
-                    table.isActive = isActive;
+                    table.isActive = _this.isTableActive(table);
                     callback(table);
                 });
             });
@@ -200,7 +201,7 @@ exports.doGet = function (req, res) {
       }).populate('divisions').exec(function(err, doc2) {
           if (!doc2) {
               return res.status(400).send({
-                  message: "There is no next round to show. Wait for the current round to end."
+                  message: "There is no next round to show. Wait for the current round to end or if already ended manually calculate the next round."
               });
           }
           _this.populateTable(doc2, function(table) {
@@ -209,7 +210,7 @@ exports.doGet = function (req, res) {
           });
       });
   } else {
-      Table.find().populate('divisions').exec(function (err, tables) {
+      Table.find().populate('divisions').sort("-number").exec(function (err, tables) {
           if (err) {
               return res.status(400).send({
                   message: errorHandler.getErrorMessage(err)
@@ -222,25 +223,39 @@ exports.doGet = function (req, res) {
 
 };
 
+exports.isTableActive = function(table) {
+    return Date.now() > table.start && _this.isActiveOrFuture(table);
+};
+
+exports.isActiveOrFuture = function(table) {
+    return Date.now() < table.end;
+};
+
 /**
  * Update a table
  */
 exports.update = function (req, res) {
   var table = req.table;
 
-  table.number = req.body.number;
-  table.start = req.body.start;
-  table.end = req.body.end;
+    if (_this.isActiveOrFuture(table)) {
 
-  table.save(function (err) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
+        table.start = req.body.start;
+        table.end = req.body.end;
+
+        table.save(function (err) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.json(table);
+            }
+        });
     } else {
-      res.json(table);
+        return res.status(400).send({
+            message: "Cannot edit a round from the past."
+        });
     }
-  });
 };
 
 /**
@@ -249,29 +264,37 @@ exports.update = function (req, res) {
 exports.delete = function (req, res) {
   var table = req.table;
 
-    _.each(table.divisions, function(division) {
-        Division.findById(division).exec(function(err, divisionDoc) {
-            if (divisionDoc) {
-                _.each(divisionDoc.scores, function (score) {
-                    Score.findById(score).exec(function (err, scoreDoc) {
-                        if (scoreDoc) {
-                            scoreDoc.remove();
-                        }
+
+    if (_this.isActiveOrFuture(table)) {
+
+        _.each(table.divisions, function (division) {
+            Division.findById(division).exec(function (err, divisionDoc) {
+                if (divisionDoc) {
+                    _.each(divisionDoc.scores, function (score) {
+                        Score.findById(score).exec(function (err, scoreDoc) {
+                            if (scoreDoc) {
+                                scoreDoc.remove();
+                            }
+                        });
                     });
+                    divisionDoc.remove();
+                }
+            });
+        });
+        table.remove(function (err) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
                 });
-                divisionDoc.remove();
+            } else {
+                res.json(table);
             }
         });
-    });
-  table.remove(function (err) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
     } else {
-      res.json(table);
+        return res.status(400).send({
+            message: "Cannot delete a round from the past."
+        });
     }
-  });
 };
 
 
