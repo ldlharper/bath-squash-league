@@ -1,5 +1,5 @@
 .content {
-  margin-top: 50px;
+  margin: 50px 50px 0 50px;
 }
 .undecorated-link:hover {
   text-decoration: none;
@@ -32,4 +32,18 @@ a:hover .header-profile-image {
 .user-header-dropdown-toggle {
   padding-top: 11px !important;
   padding-bottom: 11px !important;
+}
+
+body {
+  background-image: url('../img/ball_court_background.jpg');
+}
+
+header {
+  background: rgba(255,255,255,0.9);
+}
+
+@media screen and (min-width: 768px) {
+  .navbar-header {
+    display: block !important;
+  }
 }

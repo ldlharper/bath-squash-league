@@ -4,7 +4,8 @@
     </div>
     <div class="page-header" ng-if="table.number && table.start && table.end">
         <h1>Round {{table.number}}</h1>
-        <h2>Starting {{table.start | date:'mediumDate'}} Submit score before {{table.end | date:'mediumDate'}}</h2>
+        <h2>Starts on {{table.start | date:'mediumDate'}}</h2>
+        <h2>Submit scores before {{table.end | date:'mediumDate'}}</h2>
     </div>
     <pagination ng-if="!isNextRound" boundary-links="true" max-size="8" total-items="totalNumber" ng-model="table.number" items-per-page="itemsPerPage" ng-change="pageChanged()"></pagination>
     <div class="list-group">
@@ -29,29 +30,27 @@
                 </tbody>
             </table>
 
-            <div class="container" ng-if="division.inactiveUsers.indexOf(playerRow._id) === -1 && authentication.user && divisionHasCurrentUser(division, authentication.user) !== -1 && table.isActive">
+            <div ng-if="division.inactiveUsers.indexOf(playerRow._id) === -1 && authentication.user && divisionHasCurrentUser(division, authentication.user) !== -1 && table.isActive">
                 <form class="form-inline" ng-repeat="score in division.scores"  data-ng-submit="submitScore()"  ng-if="score.player1._id === authentication.user._id || score.player2._id === authentication.user._id">
+                            <br />
+                            <div class="form-group">
+                                <label ng-attr-for="{{'playerScore' + $index}}" class="control-label">{{authentication.user.displayName}}</label>
 
-                        <br />
-                        <div class="form-group">
-                            <label ng-attr-for="{{'playerScore' + $index}}" class="control-label">{{authentication.user.displayName}}</label>
+                                <input ng-if="score.player1._id === authentication.user._id" data-ng-model="score.player1Score" type="text" class="form-control" ng-attr-id="{{'playerScore' + $index}}" placeholder="Your Score">
+                                <input ng-if="score.player2._id === authentication.user._id"  data-ng-model="score.player2Score" type="text" class="form-control" ng-attr-id="{{'playerScore' + $index}}" placeholder="Your Score">
+                            </div>
+                            <div class="form-group">
+                                <input ng-if="score.player1._id === authentication.user._id" data-ng-model="score.player2Score" type="text" class="form-control" ng-attr-id="{{'opponentScore' + $index}}" placeholder="Opponent Score">
+                                <input ng-if="score.player2._id === authentication.user._id" data-ng-model="score.player1Score" type="text" class="form-control" ng-attr-id="{{'opponentScore' + $index}}" placeholder="Opponent Score">
 
-                            <input ng-if="score.player1._id === authentication.user._id" data-ng-model="score.player1Score" type="text" class="form-control" ng-attr-id="{{'playerScore' + $index}}" placeholder="Your Score">
-                            <input ng-if="score.player2._id === authentication.user._id"  data-ng-model="score.player2Score" type="text" class="form-control" ng-attr-id="{{'playerScore' + $index}}" placeholder="Your Score">
-                        </div>
-                        <div class="form-group">
-                            <input ng-if="score.player1._id === authentication.user._id" data-ng-model="score.player2Score" type="text" class="form-control" ng-attr-id="{{'opponentScore' + $index}}" placeholder="Opponent Score">
-                            <input ng-if="score.player2._id === authentication.user._id" data-ng-model="score.player1Score" type="text" class="form-control" ng-attr-id="{{'opponentScore' + $index}}" placeholder="Opponent Score">
-
-                            <label  ng-attr-for="{{'opponentScore' + $index}}" class=control-label">{{score.player1._id === authentication.user._id ? score.player2.displayName : score.player1.displayName}}</label>
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" class="btn btn-default">
-                        </div>
-                        <div data-ng-show="error" class="text-danger">
-                            <strong data-ng-bind="error"></strong>
-                        </div>
-
+                                <label  ng-attr-for="{{'opponentScore' + $index}}" class=control-label">{{score.player1._id === authentication.user._id ? score.player2.displayName : score.player1.displayName}}</label>
+                            </div>
+                            <div class="form-group pull-right">
+                                <input type="submit" class="btn btn-primary">
+                            </div>
+                            <div data-ng-show="error" class="text-danger">
+                                <strong data-ng-bind="error"></strong>
+                            </div>
                 </form>
             </div>
         </div>

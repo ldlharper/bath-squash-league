@@ -13,6 +13,7 @@ angular.module('tables').controller('TablesController', ['$scope', '$stateParams
             $scope.sucess = "Round calculated."
         }, function(error) {
             $scope.error = error.data.message;
+            $scope.error = error.data.message;
         });
       };
 
