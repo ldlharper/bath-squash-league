@@ -28,7 +28,7 @@ exports.isAllowed = function (req, res, next) {
   var roles = (req.user) ? req.user.roles : ['guest'];
 
   // If an score is being processed and the current user is a player it then allow any manipulation
-  if (req.score && req.user && (req.player1 === req.user.id || req.player2 === req.user.id)) {
+  if (req.body.player1 && req.body.player2 && req.user && (req.user._id.equals(req.body.player1) || req.user._id.equals(req.body.player2))) {
     return next();
   }
   // Check for user roles
