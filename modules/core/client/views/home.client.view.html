@@ -38,7 +38,7 @@
          <back-top>Scroll top</back-top>
          <div>
             <h1>News</h1>
-            <a data-ng-repeat="article in articles" class="list-group-item">
+            <div data-ng-repeat="article in articles" class="list-group-item">
                <small class="list-group-item-text">
                Posted on
                <span data-ng-bind="article.created | date:'mediumDate'"></span>
@@ -47,7 +47,7 @@
                </small>
                <h4 class="list-group-item-heading" data-ng-bind="article.title"></h4>
                <p class="list-group-item-text" data-ng-bind-html="article.content"></p>
-            </a>
+            </div>
          </div>
          <div id="about" class="home-group">
             <h2>About the league</h2>
