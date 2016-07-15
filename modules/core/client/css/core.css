@@ -1,5 +1,5 @@
 .content {
-  margin: 50px 50px 0 50px;
+  margin: 100px 0 0 0;
 }
 .undecorated-link:hover {
   text-decoration: none;
@@ -61,4 +61,8 @@ header {
 
 .home-group {
   padding-top: 100px;
+}
+
+.navbar-toggle {
+  background-color: black;
 }
