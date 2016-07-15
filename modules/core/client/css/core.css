@@ -55,6 +55,16 @@ header {
   }
 }
 
+@media screen and (max-width: 768px) {
+  .response-width {
+    width: 100%;
+    height: auto;
+  }
+  #home ul {
+    padding-left: 0;
+  }
+} 
+
 #return-to-top {
   bottom: 10px;
 }
@@ -64,5 +74,18 @@ header {
 }
 
 .navbar-toggle {
-  background-color: black;
+  background-color: #337ab7;
+}
+.navbar-toggle .icon-bar {
+  background: white;
+}
+
+.navbar-brand {
+  text-transform: none;
+  font-weight: 750;
+  letter-spacing: 0px;
+}
+
+table {
+  margin-left: -15px;
 }
