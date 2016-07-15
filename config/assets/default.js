@@ -5,7 +5,8 @@ module.exports = {
     lib: {
       css: [
         'public/lib/bootstrap/dist/css/bootstrap.css',
-        'public/theme/startbootstrap-business-casual-1.0.4/css/business-casual.css'
+        'public/theme/startbootstrap-business-casual-1.0.4/css/business-casual.css',
+        'public/lib/angular-backtop/dist/angular-backtop.css'
       ],
       js: [
         'public/lib/angular/angular.js',
@@ -15,6 +16,8 @@ module.exports = {
         'public/lib/angular-ui-utils/ui-utils.js',
         'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
         'public/lib/angular-file-upload/angular-file-upload.js',
+        'public/lib/angular-backtop/dist/angular-backtop.js',
+        'public/lib/angular-sanitize/angular-sanitize.js'
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']
     },

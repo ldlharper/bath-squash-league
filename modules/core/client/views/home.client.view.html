@@ -1,17 +1,679 @@
 <section data-ng-controller="HomeController" data-ng-init="find()">
-  <div class="page-header">
-    <h1>News</h1>
-  </div>
-  <div class="list-group">
-    <a data-ng-repeat="article in articles" data-ui-sref="articles.view({articleId: article._id})" class="list-group-item">
-      <small class="list-group-item-text">
-        Posted on
-        <span data-ng-bind="article.created | date:'mediumDate'"></span>
-        by
-        <span data-ng-bind="article.user.displayName"></span>
-      </small>
-      <h4 class="list-group-item-heading" data-ng-bind="article.title"></h4>
-      <p class="list-group-item-text" data-ng-bind="article.content"></p>
-    </a>
-  </div>
+   <div class="row">
+      <div class="hidden-xs hidden-sm col-md-2">
+         <ul id="navPills" class="nav nav-pills nav-stacked col-md-12">
+            <li>
+               <a href="#news">News</a>
+            </li>
+            <li>
+               <a href="#about">About the league</a>
+            </li>
+            <li>
+               <a href="#donate">Donate</a>
+            </li>
+            <li>
+               <a href="#rules">League Rules</a>
+            </li>
+            <li>
+               <a href="#faqs">FAQs</a>
+            </li>
+            <li>
+               <a href="#bad">BAD league</a>
+            </li>
+            <li>
+               <a href="#round-robins">Round Robins</a>
+            </li>
+            <li>
+               <a href="#calendar">Calendar</a>
+            </li>
+            <li>
+               <a href="#links">Useful links</a>
+            </li>
+            <li>
+               <a href="#videos">Squash video tips</a>
+            </li>
+         </ul>
+      </div>
+      <div class="col-md-10">
+         <back-top>Scroll top</back-top>
+         <div>
+            <h1>News</h1>
+            <a data-ng-repeat="article in articles" class="list-group-item">
+               <small class="list-group-item-text">
+               Posted on
+               <span data-ng-bind="article.created | date:'mediumDate'"></span>
+               by
+               <span data-ng-bind="article.user.displayName"></span>
+               </small>
+               <h4 class="list-group-item-heading" data-ng-bind="article.title"></h4>
+               <p class="list-group-item-text" data-ng-bind-html="article.content"></p>
+            </a>
+         </div>
+         <div id="about" class="home-group">
+            <h2>About the league</h2>
+            <p>The Bath Squash League is a friendly and active mixed league, based at the Bath Sports and Leisure Centre in the centre of Bath.</p>
+            <p>It'ss free to join but we ask that members <a href="#donate">make a small donation</a> to help cover website hosting and admin costs.<br>
+            </p>
+            <p>Players of all levels are welcome to join and we currently have around 85 members from Bath, Bristol and the surrounding area.</p>
+            <p>The league predominantly caters for local players who are available throughout the year, with most matches being played during midweek evenings and weekends.</p>
+            <p>The league consists of divisions of six players with each cycle running for five weeks, followed by a one week break whilst the new tables are produced.&nbsp; The top two players in each division at the end of the cycle will be promoted, and the bottom two players relegated.</p>
+            <p>New joining players are placed in a 'New Players Division', before being incorporated into the main league structure.&nbsp; For new players who would expect to be suited to playing towards the top divisions, it may take a few cycles of playing in the lower divisions before an opportunity comes to move up.&nbsp; We'd encourage you to drop us an email to discuss opportunites for being fast tracked up the league if you are well used to playing at a higher level.</p>
+            <p>League members are expected to complete all of their allocated matches, and those players that play no matches in a single cycle, or consistently play less than the alloted amount over a number of cycles, will be removed.</p>
+         </div>
+         <div id="donate" class="home-group">
+            <h2>Please make a donation</h2>
+            <p>The league is run voluntarily by two active league members and has always been free to join. We do however have certain overheads that need to be covered such as website hosting and site administration fees.</p>
+            <p>To help us continue offering the league for free we would really appreciate a small donation.</p>
+            <p>Click below to donate via PayPal. You don't need a PayPal account. Thank you.</p>
+            <p>&nbsp;</p>
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input name="cmd" type="hidden" value="_s-xclick"> <input name="hosted_button_id" type="hidden" value="TRXYN5ZFM347N"> <input alt="PayPal – The safer, easier way to pay online." border="0" name="submit" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" type="image"> <img alt="" border="0" height="1" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1"></form>
+         </div>
+         <div id="rules" class="home-group">
+            <h2>League rules</h2>
+            <ul>
+               <li>
+                  <p>
+                     The league is open to players of all standard.
+                  </p>
+               </li>
+               <li>
+                  <p>
+                     All games must be played within the dates specified in the current cycle.
+                  </p>
+               </li>
+               <li>
+                  <p>
+                     Court fees must be shared equally between both players.
+                  </p>
+               </li>
+               <li>
+                  <p>To arrange matches, players are responsible for contacting the 2 or 3 players below them, depending on how many players are in their box. See the table below.</p>
+                  <table class="table table-striped" width="280" border="0" cellpadding="5" cellspacing="0" class="table-txt" id="faq-table">
+                     <tbody>
+                        <tr>
+                           <td colspan="4" align="center" valign="middle" class="table-txt"><strong>SYSTEM FOR ARRANGING MATCHES</strong><strong></strong></td>
+                        </tr>
+                        <tr>
+                           <td width="70" align="center" class="table-txt"><strong>PLAYER</strong></td>
+                           <td width="70" align="center" class="table-txt"><strong>5 PLAYER BOX</strong></td>
+                           <td width="70" align="center"><strong>6 PLAYER BOX</strong></td>
+                           <td width="70" align="center"><strong>7 PLAYER BOX</strong></td>
+                        </tr>
+                        <tr>
+                           <td align="center"><strong>1</strong></td>
+                           <td align="center">2,3</td>
+                           <td align="center">2,3</td>
+                           <td align="center">2,3,4</td>
+                        </tr>
+                        <tr>
+                           <td align="center"><strong>2</strong></td>
+                           <td align="center">3,4</td>
+                           <td align="center">3,4</td>
+                           <td align="center">3,4,5</td>
+                        </tr>
+                        <tr>
+                           <td align="center"><strong>3</strong></td>
+                           <td align="center">4,5</td>
+                           <td align="center">4,5</td>
+                           <td align="center">4,5,6</td>
+                        </tr>
+                        <tr>
+                           <td align="center"><strong>4</strong></td>
+                           <td align="center">5,1</td>
+                           <td align="center">5,6,1</td>
+                           <td align="center">5,6,7</td>
+                        </tr>
+                        <tr>
+                           <td align="center"><strong>5</strong></td>
+                           <td align="center">1,2</td>
+                           <td align="center">6,1,2</td>
+                           <td align="center">6,7,1</td>
+                        </tr>
+                        <tr>
+                           <td align="center"><strong>6</strong></td>
+                           <td align="center">&nbsp;</td>
+                           <td align="center">1,2,3</td>
+                           <td align="center">7,1,2</td>
+                        </tr>
+                        <tr>
+                           <td align="center"><strong>7</strong></td>
+                           <td align="center">&nbsp;</td>
+                           <td align="center">&nbsp;</td>
+                           <td align="center">1,2,3</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </li>
+               <li>
+                  <p class="body">
+                     The squash league is played to the <a href="101102_Singles-Rules-V5.pdf">World Squash Federation Singles Rules</a> though we use the English 'Server only Scores' scoring system and not the American PAR (Point a Rally) system. Details of the 'Server only Scores' scoring system can be found in Appendix 7 (page 39) of the <a href="101102_Singles-Rules-V5.pdf">World Squash Federation Singles Rules</a>.
+                  </p>
+               </li>
+               <li>
+                  <p>
+                     All matches are the best of 5 games, played with the double yellow spot ball, unless both players agree to use a different type.
+                  </p>
+               </li>
+               <li>
+                  <p>
+                     The score at the end of court time stands, unless both players agree to a re-match.
+                  </p>
+               </li>
+               <li>
+                  <p>
+                     League cycles run for a period of 5 weeks. There is usually a week break in between cycles. Over holiday periods, the league may be extended.
+                  </p>
+               </li>
+               <li>
+                  <p>
+                     A walkover is given to a player if their opponent fails to turn up without giving reasonable prior notice (48hrs or as agreed). Walkovers will be awarded at the discretion of the organisers.
+                  </p>
+               </li>
+               <li>
+                  <p>
+                     Walkover: 6pts to claimant, 2pts deducted from opponent.
+                  </p>
+               </li>
+               <li>
+                  <p>
+                     Only completed games count toward points scored.
+                  </p>
+               </li>
+               <li>
+                  <p>
+                     <strong>Points will be awarded as follows:</strong>
+                  </p>
+               </li>
+            </ul>
+            <table class="table table-striped" id="faq-table">
+               <tbody>
+                  <tr>
+                     <td width="100" align="center"><strong>Game score </strong></td>
+                     <td width="100" align="center"><strong>Points awarded </strong></td>
+                  </tr>
+                  <tr>
+                     <td align="center" class="table-txt">3-0</td>
+                     <td align="center" class="table-txt">6-1</td>
+                  </tr>
+                  <tr>
+                     <td align="center" class="table-txt">3-1</td>
+                     <td align="center" class="table-txt">5-2</td>
+                  </tr>
+                  <tr>
+                     <td align="center" class="table-txt">3-2</td>
+                     <td align="center" class="table-txt">4-3</td>
+                  </tr>
+                  <tr>
+                     <td align="center" class="table-txt">2-2</td>
+                     <td align="center" class="table-txt">3-3</td>
+                  </tr>
+                  <tr>
+                     <td align="center" class="table-txt">2-1</td>
+                     <td align="center" class="table-txt">3-2</td>
+                  </tr>
+                  <tr>
+                     <td align="center" class="table-txt">2-0</td>
+                     <td align="center" class="table-txt">3-1</td>
+                  </tr>
+               </tbody>
+            </table>
+            <ul>
+               <li>
+                  <p>
+                     The following promotion/relegation outline applies:<br>
+                     <strong>Winner/Runner-up move up 1 division<br>
+                     Bottom 2 move down 1 division</strong>
+                  </p>
+               </li>
+            </ul>
+            <p>There are rare instances when the above rule doesn't apply, usually when  a division has to contain 5 or 7 players, though we try to be as consistent as possible.</p>
+            <ul>
+               <li>
+                  <p>
+                     In the event of points being tied between two or more players at the end of the cycle, positions will be determined based on the following criteria:<br>
+                     a)&nbsp; Winner of the game between players tied<br>
+                     b)&nbsp; Player with more victories<br>
+                     c)&nbsp; Player who played most matches<br>
+                     d)&nbsp; If STILL equal – then, a play-off OR the Organiser's discretion decides. 
+                  </p>
+               </li>
+               <li>
+                  <p>
+                     Players not completing their full quota of matches <em>may</em> be excluded from future cycles.
+                  </p>
+               </li>
+            </ul>
+         </div>
+         <div id="faqs" class="home-group">
+            <h1>FAQs</h1>
+         </div>
+         <div id="bad" class="home-group">
+            <h2>Bristol &amp; District Squash League</h2>
+            <p>The <a href="http://www.badsquash.co.uk">Bristol and District Squash League</a>&nbsp; (aka BAD squash)&nbsp;is a large and&nbsp;highly competitive league that covers Bristol and the surrounding area.<br>
+               <br>
+               Bath Leisure's&nbsp;squash team&nbsp;are currently playing in&nbsp;division 6 for the current spring round. In our division there are 3 Bristol teams as well as one from Hutton Moor and one from Weston-Super-Mare. We have 10-12 players&nbsp;in the squad who&nbsp;have played already this season&nbsp;and are&nbsp;always on the look out for new team members. The team is made up of players&nbsp;from the top 3 boxes, but If we can get enough interest, we'd like to set up a second team. There are five players in a team and every player simply plays a match against their opposite number. In the autumn and spring leagues we have dinner after the match with our opposition. Overall we play 20-30 matches per year.
+            </p>
+            <p>If you're interested in joining the team and you're in the top third of the league, email <a href="mailto:robandharriet@pagnamenta.orangehome.co.uk">Rob Pagnamenta</a> or <a href="mailto:organiser@bath-squash-league.co.uk">Nick Shearn</a>&nbsp;for more information.</p>
+            <p><img alt="The Bath Leisure Squash team Feb 2016" height="315" src="/statics/images/squash-team-feb16.jpg" width="420"></p>
+            <p><em>The team Feb 2016, Left&nbsp;to right: Clinton Lucas, Andrew Mortimer, Andy Stacey, Nick Shearn, Rob Pagnamenta (captain)</em></p>
+            <h3>Mixed Spring League 2015/16 Fixture list (Division 6)</h3>
+            <table class="table table-striped" border="0" cellpadding="5" cellspacing="0" class="table-txt" id="faq-table" width="420">
+               <tbody>
+                  <tr>
+                     <td align="center" class="table-txt"><strong>DATE</strong></td>
+                     <td align="center" class="table-txt"><strong>H/A</strong></td>
+                     <td align="center"><strong>OPPOSITION</strong></td>
+                     <td align="center"><strong>W/L</strong></td>
+                     <td align="center"><strong>RESULT</strong></td>
+                  </tr>
+                  <tr>
+                     <td align="center">13/01/16</td>
+                     <td align="center">A</td>
+                     <td align="left">Redland Squash Lions Winter E</td>
+                     <td align="center" class="table-txt">L</td>
+                     <td align="center">17-9</td>
+                  </tr>
+                  <tr>
+                     <td align="center">20/01/16</td>
+                     <td align="center">H</td>
+                     <td align="left">Kingswood A</td>
+                     <td align="center" class="table-txt">W</td>
+                     <td align="center">14-8</td>
+                  </tr>
+                  <tr>
+                     <td align="center">27/01/16</td>
+                     <td align="center">A</td>
+                     <td align="left">David Lloyd F</td>
+                     <td align="center">L</td>
+                     <td align="center">14-8</td>
+                  </tr>
+                  <tr>
+                     <td align="center">03/02/16</td>
+                     <td align="center">H</td>
+                     <td align="left">Hutton Moor A</td>
+                     <td align="center">W</td>
+                     <td align="center">13-7</td>
+                  </tr>
+                  <tr>
+                     <td align="center">10/02/16</td>
+                     <td align="center">A</td>
+                     <td align="left">Weston Squash &amp; Racketball Club C</td>
+                     <td align="center">L</td>
+                     <td align="center">13-7</td>
+                  </tr>
+                  <tr>
+                     <td align="center">17/02/16</td>
+                     <td align="center">H</td>
+                     <td align="left">Redland Squash Lions Winter E</td>
+                     <td align="center">L</td>
+                     <td align="center">3-18</td>
+                  </tr>
+                  <tr>
+                     <td align="center">24/02/16</td>
+                     <td align="center">A</td>
+                     <td align="left">Kingswood A</td>
+                     <td align="center">L</td>
+                     <td align="center">15-7</td>
+                  </tr>
+                  <tr>
+                     <td align="center">02/03/16</td>
+                     <td align="center">H</td>
+                     <td align="left">David Lloyd F</td>
+                     <td align="center">W</td>
+                     <td align="center">13-7</td>
+                  </tr>
+                  <tr>
+                     <td align="center">09/03/16</td>
+                     <td align="center">A</td>
+                     <td align="left">Hutton Moor A</td>
+                     <td align="center">W</td>
+                     <td align="center">16-3</td>
+                  </tr>
+                  <tr>
+                     <td align="center">16/03/16</td>
+                     <td align="center">H</td>
+                     <td align="left">Weston Squash &amp; Racketball Club C</td>
+                     <td align="center">L</td>
+                     <td align="center">10-13</td>
+                  </tr>
+                  <tr>
+                     <td align="center">&nbsp;</td>
+                     <td align="center">&nbsp;</td>
+                     <td align="left">&nbsp;</td>
+                     <td align="center">&nbsp;</td>
+                     <td align="center">&nbsp;</td>
+                  </tr>
+               </tbody>
+            </table>
+            <h3>Mixed Autumn League 2015/16 Fixture list (Division 4)</h3>
+            <table class="table table-striped" border="0" cellpadding="5" cellspacing="0" class="table-txt" id="faq-table" width="420">
+               <tbody>
+                  <tr>
+                     <td align="center" class="table-txt" width="70"><strong>DATE</strong></td>
+                     <td align="center" class="table-txt" width="30"><strong>H/A</strong></td>
+                     <td align="center" width="200"><strong>OPPOSITION</strong></td>
+                     <td align="center" width="30"><strong>W/L</strong></td>
+                     <td align="center" width="70"><strong>RESULT</strong></td>
+                  </tr>
+                  <tr>
+                     <td align="center">14/10/15</td>
+                     <td align="center">H</td>
+                     <td align="left">Whitchurch Imperial A</td>
+                     <td align="center" class="table-txt">W</td>
+                     <td align="center">18-4</td>
+                  </tr>
+                  <tr>
+                     <td align="center">21/10/15</td>
+                     <td align="center">H</td>
+                     <td align="left">Lansdown D</td>
+                     <td align="center">L</td>
+                     <td align="center">6-17</td>
+                  </tr>
+                  <tr>
+                     <td align="center">28/10/15</td>
+                     <td align="center">A</td>
+                     <td align="left">Bath University 3</td>
+                     <td align="center">L</td>
+                     <td align="center">3-19</td>
+                  </tr>
+                  <tr>
+                     <td align="center">04/11/15</td>
+                     <td align="center">H</td>
+                     <td align="left">Gordano B</td>
+                     <td align="center">L</td>
+                     <td align="center">10-14</td>
+                  </tr>
+                  <tr>
+                     <td align="center">18/11/15</td>
+                     <td align="center">A</td>
+                     <td align="left">Whitchurch Imperial A</td>
+                     <td align="center">L</td>
+                     <td align="center">5-16</td>
+                  </tr>
+                  <tr>
+                     <td align="center">25/11/15</td>
+                     <td align="center">A</td>
+                     <td align="left">Lansdown D</td>
+                     <td align="center">L</td>
+                     <td align="center">4-16</td>
+                  </tr>
+                  <tr>
+                     <td align="center">02/12/15</td>
+                     <td align="center">H</td>
+                     <td align="left">Bath University 3</td>
+                     <td align="center">L</td>
+                     <td align="center">0-19</td>
+                  </tr>
+                  <tr>
+                     <td align="center">09/12/15</td>
+                     <td align="center">A</td>
+                     <td align="left">Gordano B</td>
+                     <td align="center">L</td>
+                     <td align="center">8-16</td>
+                  </tr>
+                  <tr>
+                     <td align="center">&nbsp;</td>
+                     <td align="center">&nbsp;</td>
+                     <td align="left">&nbsp;</td>
+                     <td align="center">&nbsp;</td>
+                     <td align="center">&nbsp;</td>
+                  </tr>
+               </tbody>
+            </table>
+            <p><img alt="The Bath Leisure Squash team Nov 2014" height="315" src="/statics/images/bath-leisure-squash-team.jpg" width="420"></p>
+            <p><em>The team Nov 2014, Left&nbsp;to right: David Rey, Andy Ottaway, Andy Stacey, Nick Shearn, Rob Pagnamenta (captain)</em></p>
+            <h3>Mixed Autumn League 2014/15 Fixture list (Division 2B)</h3>
+            <table class="table table-striped" border="0" cellpadding="5" cellspacing="0" class="table-txt" id="faq-table" width="420">
+               <tbody>
+                  <tr>
+                     <td align="center" class="table-txt" width="70"><strong>DATE</strong></td>
+                     <td align="center" class="table-txt" width="30"><strong>H/A</strong></td>
+                     <td align="center" width="200"><strong>OPPOSITION</strong></td>
+                     <td align="center" width="30"><strong>W/L</strong></td>
+                     <td align="center" width="70"><strong>RESULT</strong></td>
+                  </tr>
+                  <tr>
+                     <td align="center">08/10/14</td>
+                     <td align="center">H</td>
+                     <td align="left">Redwood Phoenix B</td>
+                     <td align="center" class="table-txt">W</td>
+                     <td align="center">19-3</td>
+                  </tr>
+                  <tr>
+                     <td align="center">15/10/14</td>
+                     <td align="center">H</td>
+                     <td align="left">Whitchurch Imperial A</td>
+                     <td align="center">W</td>
+                     <td align="center">18-6</td>
+                  </tr>
+                  <tr>
+                     <td align="center">23/10/14</td>
+                     <td align="center">A</td>
+                     <td align="left">BLTSC Lions Winter D</td>
+                     <td align="center">L</td>
+                     <td align="center">6-16</td>
+                  </tr>
+                  <tr>
+                     <td align="center">29/10/14</td>
+                     <td align="center">H</td>
+                     <td align="left">Bath University 2</td>
+                     <td align="center">L</td>
+                     <td align="center">6-14</td>
+                  </tr>
+                  <tr>
+                     <td align="center">05/11/14</td>
+                     <td align="center">A</td>
+                     <td align="left">Bradley Stoke Squash Club A</td>
+                     <td align="center">L</td>
+                     <td align="center">7-16</td>
+                  </tr>
+                  <tr>
+                     <td align="center">12/11/14</td>
+                     <td align="center">A</td>
+                     <td align="left">Redwood Phoenix B</td>
+                     <td align="center">W</td>
+                     <td align="center">19-4</td>
+                  </tr>
+                  <tr>
+                     <td align="center">19/11/14</td>
+                     <td align="center">A</td>
+                     <td align="left">Whitchurch Imperial A</td>
+                     <td align="center">W</td>
+                     <td align="center">16-4</td>
+                  </tr>
+                  <tr>
+                     <td align="center">26/11/14</td>
+                     <td align="center">H</td>
+                     <td align="left">BLTSC Lions Winter D</td>
+                     <td align="center">W</td>
+                     <td align="center">19-1</td>
+                  </tr>
+                  <tr>
+                     <td align="center">02/12/14</td>
+                     <td align="center">A</td>
+                     <td align="left">Bath University 2</td>
+                     <td align="center">L</td>
+                     <td align="center">7-19</td>
+                  </tr>
+                  <tr>
+                     <td align="center">10/12/14</td>
+                     <td align="center">H</td>
+                     <td align="left">Bradley Stoke Squash Club A</td>
+                     <td align="center">W</td>
+                     <td align="center">15-8</td>
+                  </tr>
+               </tbody>
+            </table>
+            <h3>Mixed Spring League 2014/15 Fixture list (Division 2C)</h3>
+            <table class="table table-striped" border="0" cellpadding="5" cellspacing="0" class="table-txt" id="faq-table2" width="420">
+               <tbody>
+                  <tr>
+                     <td align="center" class="table-txt"><strong>DATE</strong></td>
+                     <td align="center" class="table-txt"><strong>H/A</strong></td>
+                     <td align="center"><strong>OPPOSITION</strong></td>
+                     <td align="center"><strong>W/L</strong></td>
+                     <td align="center"><strong>RESULT</strong></td>
+                  </tr>
+                  <tr>
+                     <td align="center">14/01/15</td>
+                     <td align="center">H</td>
+                     <td align="left">Gordano B</td>
+                     <td align="center" class="table-txt">W</td>
+                     <td align="center">18-3</td>
+                  </tr>
+                  <tr>
+                     <td align="center">28/01/15</td>
+                     <td align="center">A</td>
+                     <td align="left">Shepton Mallet B</td>
+                     <td align="center">L</td>
+                     <td align="center">4-19</td>
+                  </tr>
+                  <tr>
+                     <td align="center">04/02/15</td>
+                     <td align="center">H</td>
+                     <td align="left">Bath University 3</td>
+                     <td align="center">L</td>
+                     <td align="center">10-17</td>
+                  </tr>
+                  <tr>
+                     <td align="center">11/02/15</td>
+                     <td align="center">A</td>
+                     <td align="left">Hutton Moor A</td>
+                     <td align="center">W</td>
+                     <td align="center">12-6</td>
+                  </tr>
+                  <tr>
+                     <td align="center">18/02/15</td>
+                     <td align="center">A</td>
+                     <td align="left">Gordano B</td>
+                     <td align="center">W</td>
+                     <td align="center">19-3</td>
+                  </tr>
+                  <tr>
+                     <td align="center">24/02/15</td>
+                     <td align="center">A</td>
+                     <td align="left">Bath University 3</td>
+                     <td align="center">W</td>
+                     <td align="center">18-5</td>
+                  </tr>
+                  <tr>
+                     <td align="center">04/03/15</td>
+                     <td align="center">H</td>
+                     <td align="left">Shepton Mallet B</td>
+                     <td align="center">L</td>
+                     <td align="center">5-16</td>
+                  </tr>
+                  <tr>
+                     <td align="center">11/03/15</td>
+                     <td align="center">H</td>
+                     <td align="left">Burnham-On-Sea Squash A</td>
+                     <td align="center">L</td>
+                     <td align="center">15-7</td>
+                  </tr>
+                  <tr>
+                     <td align="center">18/03/15</td>
+                     <td align="center">H</td>
+                     <td align="left">Hutton Moor A</td>
+                     <td align="center">W</td>
+                     <td align="center">17-6</td>
+                  </tr>
+                  <tr>
+                     <td align="center">26/03/15</td>
+                     <td align="center">A</td>
+                     <td align="left">Burnham-On-Sea Squash A</td>
+                     <td align="center">L</td>
+                     <td align="center">9-15</td>
+                  </tr>
+               </tbody>
+            </table>
+            <p>&nbsp;</p>
+            <h3>Current team members:</h3>
+            <p>Rob Pagnamenta (Captain), Nick Shearn, Andrew Mortimer, Andy Stacey,&nbsp;Martin Vaughan, Luke Harper, Terry Siau, Howard Pothecary, Clinton Lucas, Chester Barnes, Marcus Green, Chris Curtain.</p>
+            <p>&nbsp;</p>
+         </div>
+         <div id="round-robins" class="home-group">
+            <h2>Round-robin Tournaments            </h2>
+            <p>Bath Squash League round-robin tournaments are intended as a fun addition to your league matches. They're not compulsory but are a way of getting together with your box members socially as a group and totalling scores over a pint or two at the pub afterwards!</p>
+            <h3>What is a Round-robin?</h3>
+            <p>Essentially, in a round-robin tournament, every participant plays every other participant once. Scores are recorded and the player with the most points wins.</p>
+            <h3>How does it work?</h3>
+            <p>At the start of each league round, players must decide between them if they would like to play a round-robin during the league round. Tournaments can be played with 4, 5, 6 or 7 players. If enough players agree to play, players must book the required courts and share the cost between each other.</p>
+            <p>Games are played up to 21 points using the Point-a-rally system (PARS) for a set number of minutes (see score sheet). After the set period, play must stop, scores are recorded and the next games begin. Once everyone has played each other, scores are totalled over a pint at the pub (Lambrettas or <a href="http://www.royaloak-bath.co.uk" target="_blank">The Royal Oak</a> are probably the closest).</p>
+            <h3>How many courts do I need to book?</h3>
+            <p>This depends on how many players there are…</p>
+            <p>4 players - 2 courts for a single 45 min session £12.60 | £3.15 ea<br>
+               5 players - 2 courts for a double session £25.20 | £5.04 ea<br>
+               6 players - 2 courts for a double session £25.20 | £4.20 ea<br>
+               7 players - 3 courts for a double session £37.80 | £5.40 ea
+            </p>
+            <h3>How do I book?</h3>
+            <p>The best way to book is to call Jean Dugmore at the Leisure Centre directly on 01225 486904 or email her at <a href="mailto:Jean.Dugmore@aquaterra.org">Jean.Dugmore@aquaterra.org</a>. This way one person can book all courts required. It's recommended that you book at least 12 days in advance to secure the booking.</p>
+            <p>Alternatively you can book as usual at reception though you can't book more than one court at a time this way so another player/s would also have to book a court for the same time.</p>
+            <h3>Score / instruction sheets</h3>
+            <p>The printable score/instruction sheets below explain the tournament rules and can be used during tournaments  to record scores.</p>
+            <h4><a href="/statics/media/score-sheet-4-player.pdf" target="_blank">Score sheet for 4 players</a></h4>
+            <h4><a href="/statics/media/score-sheet-5-player.pdf" target="_blank">Score sheet for 5 players</a></h4>
+            <h4><a href="/statics/media/score-sheet-6-player.pdf" target="_blank">Score sheet for 6 players</a></h4>
+            <h4><a href="/statics/media/score-sheet-7-player.pdf" target="_blank">Score sheet for 7 players</a></h4>
+         </div>
+         <div id="calendar" class="home-group">
+            <h2>League calendar</h2>
+            <iframe src="https://www.google.com/calendar/embed?title=Bath%20Squash%20League%20Calendar&amp;showTitle=0&amp;showTz=0&amp;height=420&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=organiser%40bath-squash-league.co.uk&amp;color=%23182C57&amp;src=en.uk%23holiday%40group.v.calendar.google.com&amp;color=%231B887A&amp;ctz=Europe%2FLondon" style=" border-width:0 " width="420" height="420" frameborder="0" scrolling="no"></iframe>
+         </div>
+         <div id="links" class="home-group">
+            <h2>Useful links</h2>
+            <p class="body">
+               <a href="rules.html">Bath Squash League rules</a> - Rules for this particular league.
+            </p>
+            <p class="body">
+               <a href="http://www.bathsquash.co.uk" target="_blank">www.bathsquash.co.uk</a> - The lunchtime squash league, also runs from Bath Sports &amp; Leisure Centre.
+            </p>
+            <p class="body">
+               <a href="http://www.aquaterra.org" target="_blank">www.aquaterra.org</a> - You can book games online here.
+            </p>
+            <p class="body">
+               <a href="http://www.squashskills.com" target="_blank">www.squashskills.com</a> - Squashskills is brought to you by Peter Nicol and Jethro Binns. It is an online coaching resource to make you a better squash player. Join the revolution.
+            </p>
+            <p class="body">
+               <a href="http://www.worldsquash.org" target="_blank">www.worldsquash.org</a> - Official site of the World Squash Federation. Provides results, calendar, history, contacts, game rules, court specifications and ranking lists.
+            </p>
+            <p class="body">
+               <a href="http://www.squashplayer.co.uk" target="_blank">www.squashplayer.co.uk</a> - News, reports, tournament coverage and results, articles and stories from the world of squash.
+            </p>
+            <p class="body">
+               <a href="http://www.psasquashtv.com">www.psasquashtv.com</a> - Squash TV is the official live and video on demand website of the Professional Squash Association [PSA]
+            </p>
+            <p class="body">
+               <a href="http://www.englandsquashandracketball.com">www.englandsquashandracketball.com</a> - Includes news, events calendar, history, rankings, juniors, development, coaching and official's resources, and links. Formerly, The Squash Rackets Association.
+            </p>
+            <p>&nbsp;
+            </p>
+         </div>
+         <div id="videos" class="home-group">
+            <h3>YouTube Squash Tips</h3>
+            <h4>The Warm Up</h4>
+            <h3><iframe width="423" height="238" src="http://www.youtube.com/embed/7si_4wdoQAI" frameborder="0" allowfullscreen></iframe></h3>
+            <h4>The Serve</h4>
+            <h3><iframe width="423" height="238" src="http://www.youtube.com/embed/etr1rdwNYA8" frameborder="0" allowfullscreen></iframe></h3>
+            <h4>Return of Serve</h4>
+            <h3><iframe width="423" height="238" src="http://www.youtube.com/embed/ix0erbQ8oGs" frameborder="0" allowfullscreen></iframe></h3>
+            <h4>Court Movement</h4>
+            <h3><iframe width="423" height="238" src="http://www.youtube.com/embed/vGWtyPBr21M" frameborder="0" allowfullscreen></iframe></h3>
+            <h4>Forehand Drive</h4>
+            <h3><iframe width="423" height="238" src="http://www.youtube.com/embed/lJfCFoxDkCQ" frameborder="0" allowfullscreen></iframe></h3>
+            <h4>Backhand Drive</h4>
+            <h3><iframe width="423" height="238" src="http://www.youtube.com/embed/UlHP5CblzpA" frameborder="0" allowfullscreen></iframe></h3>
+            <h4>The Volley</h4>
+            <h3><iframe width="423" height="238" src="http://www.youtube.com/embed/vQlJ2S0BXUo" frameborder="0" allowfullscreen></iframe></h3>
+            <h4>The Boast</h4>
+            <h3><iframe width="423" height="238" src="//www.youtube.com/embed/i8rVVsicIoI" frameborder="0" allowfullscreen></iframe></h3>
+            <h4>The Drop shot</h4>
+            <h3><iframe width="423" height="238" src="//www.youtube.com/embed/dpRkXAG-uYg" frameborder="0" allowfullscreen></iframe></h3>
+            <h4>The Lob</h4>
+            <h3><iframe width="423" height="238" src="//www.youtube.com/embed/aIO0UTZtMfo" frameborder="0" allowfullscreen></iframe></h3>
+            <h4>Recovery</h4>
+            <h3><iframe width="423" height="238" src="//www.youtube.com/embed/IhngWuZwXPI" frameborder="0" allowfullscreen></iframe></h3>
+         </div>
+      </div>
+   </div>
 </section>
