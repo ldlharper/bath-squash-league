@@ -1,0 +1,42 @@
+<section id="home" data-ng-controller="HomeController" data-ng-init="find()">
+   <div class="row">
+      <div class="col-md-2">
+         <ul id="navPills" class="nav nav-pills nav-stacked col-md-12">
+            <li>
+               <a data-ui-sref="home.news">News</a>
+            </li>
+            <li>
+               <a data-ui-sref="home.about">About the league</a>
+            </li>
+            <li>
+               <a data-ui-sref="home.donate">Donate</a>
+            </li>
+            <li>
+               <a data-ui-sref="home.rules">League Rules</a>
+            </li>
+            <li>
+               <a data-ui-sref="home.faqs">FAQs</a>
+            </li>
+            <li>
+               <a data-ui-sref="home.bad">BAD league</a>
+            </li>
+            <li>
+               <a data-ui-sref="home.robin">Round Robins</a>
+            </li>
+            <li>
+               <a data-ui-sref="home.calendar">Calendar</a>
+            </li>
+            <li>
+               <a data-ui-sref="home.links">Useful links</a>
+            </li>
+            <li>
+               <a data-ui-sref="home.videos">Squash video tips</a>
+            </li>
+         </ul>
+      </div>
+
+      <div class="col-md-10">
+         <ui-view />
+      </div>
+   </div>
+</section>

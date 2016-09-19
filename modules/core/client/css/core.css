@@ -1,5 +1,5 @@
 .content {
-  margin: 100px 0 0 0;
+  margin: 50px 0 0 0;
 }
 .undecorated-link:hover {
   text-decoration: none;
@@ -34,58 +34,16 @@ a:hover .header-profile-image {
   padding-bottom: 11px !important;
 }
 
-/* Theme overrides */ 
-body {
-  background-image: url('../img/ball_court_background.jpg');
-}
+
 
 header {
-  background: rgba(255,255,255,0.9);
-}
-
-@media screen and (min-width: 768px) {
-  .navbar-header {
-    display: block !important;
-  }
-  .nav>li>a {
-    padding: 20px;
-  }
-  .content {
-    margin: 200px 50px 0 50px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .response-width {
-    width: 100%;
-    height: auto;
-  }
-  #home ul {
-    padding-left: 0;
-  }
-} 
-
-#return-to-top {
-  bottom: 10px;
-}
-
-.home-group {
-  padding-top: 100px;
-}
-
-.navbar-toggle {
-  background-color: #337ab7;
-}
-.navbar-toggle .icon-bar {
-  background: white;
+  background: url('/statics/images/header-repeat.jpg') repeat-x scroll 0 0 #FFFFFF;
 }
 
 .navbar-brand {
-  text-transform: none;
-  font-weight: 750;
-  letter-spacing: 0px;
+  padding: 11px 0px;
 }
 
-table {
-  margin-left: -15px;
+header a {
+  color: black;
 }

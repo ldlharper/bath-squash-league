@@ -5,7 +5,6 @@ module.exports = {
     lib: {
       css: [
         'public/lib/bootstrap/dist/css/bootstrap.css',
-        'public/theme/startbootstrap-business-casual-1.0.4/css/business-casual.css',
         'public/lib/angular-backtop/dist/angular-backtop.css'
       ],
       js: [
